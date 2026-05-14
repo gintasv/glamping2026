@@ -1,0 +1,12 @@
+# Firebase secrets — never commit. Use firebase-config.example.js as the template.
+firebase-config.js
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Dependencies (in case anyone adds tooling later)
+node_modules/

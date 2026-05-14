@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2d5a3d">
+  <meta name="description" content="Devil's Lake State Park family camping info — Group Camp G3, June 18–22, 2026.">
+  <title>Devil's Lake Camp · G3 · Jun 18–22</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ───────── App shell ───────── -->
+<header class="app-header">
+  <div class="trip-meta">
+    <div class="trip-meta__site">🏕️ <span>Group Camp G3</span></div>
+    <div class="trip-meta__dates">Jun 18–22, 2026</div>
+  </div>
+  <div class="sync-pill" id="sync-pill" data-mode="local">📴 Local only</div>
+</header>
+
+<main id="screens">
+
+  <!-- ───────── 1. Park ───────── -->
+  <section class="screen" data-screen="park">
+    <div class="hero" id="hero"></div>
+
+    <div class="card welcome">
+      <h1>Devil's Lake</h1>
+      <p class="lead" id="park-about"></p>
+    </div>
+
+    <div class="card">
+      <h2>Getting there</h2>
+      <p class="address" id="park-address"></p>
+      <div class="row-buttons">
+        <a class="btn btn-primary" id="open-gmaps" target="_blank" rel="noopener">🗺️ Google Maps</a>
+        <a class="btn btn-secondary" id="open-amaps">🍎 Apple Maps</a>
+      </div>
+      <a class="btn-link" id="call-park" href="tel:6083568301">📞 Park HQ · 608-356-8301</a>
+    </div>
+
+    <div class="card map-card">
+      <h2>Park map</h2>
+      <div id="park-map"></div>
+      <p class="map-legend">Tap a marker for directions.</p>
+    </div>
+
+    <div class="card">
+      <h2>Site G3 amenities</h2>
+      <ul class="amenities-list" id="amenities-list"></ul>
+    </div>
+
+    <div class="card cell-card">
+      <h2>📶 Cell coverage</h2>
+      <p id="cell-summary"></p>
+      <ul class="carrier-list" id="carrier-list"></ul>
+      <p class="callout" id="cell-tip"></p>
+    </div>
+
+    <div class="card">
+      <h2>What the park has</h2>
+      <ul class="bullet-list" id="park-bullets"></ul>
+    </div>
+
+    <div class="card gallery-card">
+      <h2>The vibe</h2>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+
+  <!-- ───────── 2. Do ───────── -->
+  <section class="screen" data-screen="do" hidden>
+    <div class="section-head">
+      <h1>Things to do</h1>
+      <p class="subhead">Hikes, swims, and side trips. All vetted for kids 3–8.</p>
+    </div>
+
+    <h2 class="section-title">🥾 Kid-friendly trails</h2>
+    <div class="trail-grid" id="trail-grid"></div>
+
+    <h2 class="section-title">🛶 On the water</h2>
+    <div class="card water-card" id="water-card"></div>
+
+    <h2 class="section-title">🎯 At the park</h2>
+    <div class="activity-grid" id="activity-grid"></div>
+
+    <h2 class="section-title">🚗 Nearby</h2>
+    <div class="nearby-grid" id="nearby-grid"></div>
+  </section>
+
+  <!-- ───────── 3. Eat ───────── -->
+  <section class="screen" data-screen="eat" hidden>
+    <div class="section-head">
+      <h1>Eat · Shop · Refuel</h1>
+      <p class="subhead">Groceries, gas, butchers, and the closest taprooms.</p>
+    </div>
+
+    <h2 class="section-title">🛒 Groceries</h2>
+    <div class="biz-grid" id="biz-grocery"></div>
+
+    <h2 class="section-title">⛽ Gas</h2>
+    <div class="biz-grid" id="biz-gas"></div>
+
+    <h2 class="section-title">🥩 Butcher</h2>
+    <div class="biz-grid" id="biz-butcher"></div>
+
+    <h2 class="section-title">🍻 Wine · Whiskey · Beer</h2>
+    <div class="biz-grid" id="biz-drinks"></div>
+  </section>
+
+  <!-- ───────── 4. Safety ───────── -->
+  <section class="screen" data-screen="safety" hidden>
+    <div class="section-head">
+      <h1>Safety & emergencies</h1>
+      <p class="subhead">Save these numbers in your phone before you leave service.</p>
+    </div>
+
+    <a class="emergency-card" href="tel:911">
+      <div class="emergency-card__big">🚨 911</div>
+      <div>
+        <div class="emergency-card__head" id="emergency-head"></div>
+        <div class="emergency-card__detail" id="emergency-detail"></div>
+      </div>
+    </a>
+
+    <h2 class="section-title">🏥 Hospitals</h2>
+    <div id="hospital-list"></div>
+
+    <h2 class="section-title">☎️ Park contacts</h2>
+    <div id="park-contacts"></div>
+
+    <h2 class="section-title">👶 Kids at Devil's Lake</h2>
+    <ul class="safety-list" id="kid-safety"></ul>
+
+    <h2 class="section-title">🌧️ Weather</h2>
+    <div class="card" id="weather-card"></div>
+  </section>
+
+  <!-- ───────── 5. Pack ───────── -->
+  <section class="screen" data-screen="pack" hidden>
+    <div class="pack-header">
+      <h1>Shared packing list</h1>
+      <p class="subhead">Tap an item to claim it for your family. Everyone sees the updates live.</p>
+
+      <div class="family-row">
+        <label for="family-select" class="family-label">I'm:</label>
+        <select id="family-select" class="family-select"></select>
+        <button class="btn-tiny" id="rename-families">✏️ Rename</button>
+      </div>
+
+      <div class="trip-code-row">
+        <span class="trip-code-label">Trip code:</span>
+        <code id="trip-code"></code>
+        <button class="btn-tiny" id="copy-trip-code">Copy</button>
+      </div>
+
+      <div class="filter-chips" id="filter-chips">
+        <button class="chip chip--active" data-filter="all">All</button>
+        <button class="chip" data-filter="unclaimed">Unclaimed</button>
+        <button class="chip" data-filter="mine">Mine</button>
+        <button class="chip" data-filter="shared">Shared items</button>
+        <button class="chip" data-filter="essential">⚠️ Essentials</button>
+      </div>
+
+      <div class="legend">
+        <span class="legend-item"><span class="dot dot--shared"></span> one for the whole group</span>
+        <span class="legend-item"><span class="dot dot--perfamily"></span> per family</span>
+        <span class="legend-item"><span class="dot dot--essential"></span> essential</span>
+      </div>
+    </div>
+
+    <div id="checklist"></div>
+
+    <div class="reset-row">
+      <button class="btn btn-ghost" id="reset-claims">↺ Reset all claims</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ───────── Bottom nav ───────── -->
+<nav class="bottom-nav">
+  <button class="nav-btn nav-btn--active" data-nav="park">
+    <span class="nav-icon">🏞️</span><span class="nav-label">Park</span>
+  </button>
+  <button class="nav-btn" data-nav="do">
+    <span class="nav-icon">🥾</span><span class="nav-label">Do</span>
+  </button>
+  <button class="nav-btn" data-nav="eat">
+    <span class="nav-icon">🍔</span><span class="nav-label">Eat</span>
+  </button>
+  <button class="nav-btn" data-nav="safety">
+    <span class="nav-icon">🚑</span><span class="nav-label">Safety</span>
+  </button>
+  <button class="nav-btn" data-nav="pack">
+    <span class="nav-icon">🎒</span><span class="nav-label">Pack</span>
+  </button>
+</nav>
+
+<!-- Toast container -->
+<div id="toast" class="toast" hidden></div>
+
+<!-- Family rename modal -->
+<div class="modal" id="rename-modal" hidden>
+  <div class="modal__body">
+    <h2>Family names</h2>
+    <p class="modal__hint">Edit the 5 family names. These show up on claims so everyone knows who's bringing what.</p>
+    <div id="rename-inputs"></div>
+    <div class="modal__buttons">
+      <button class="btn btn-secondary" id="rename-cancel">Cancel</button>
+      <button class="btn btn-primary" id="rename-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="data.js"></script>
+<script src="checklist.js"></script>
+<script>window.FIREBASE_CONFIG = null;</script>
+<script src="firebase-config.js" onerror="void 0"></script>
+<script type="module" src="sync.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
