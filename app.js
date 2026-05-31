@@ -410,17 +410,35 @@ function wirePack() {
   });
 
   // Rename modal
-  $("#rename-families").addEventListener("click", openRenameModal);
-  $("#rename-cancel").addEventListener("click", () => { $("#rename-modal").hidden = true; });
-  $("#rename-save").addEventListener("click", () => {
+  const closeRenameModal = () => { $("#rename-modal").hidden = true; };
+  const saveRenameModal = () => {
     const inputs = $$("#rename-inputs input");
     const updated = inputs.map((inp, i) => ({
       id: sync.getState().families[i].id,
       name: inp.value.trim() || sync.getState().families[i].name,
     }));
     sync.setFamilies(updated);
-    $("#rename-modal").hidden = true;
-    toast("Names saved");
+    closeRenameModal();
+    toast("✓ Names saved", 2800);
+  };
+  $("#rename-families").addEventListener("click", openRenameModal);
+  $("#rename-cancel").addEventListener("click", closeRenameModal);
+  $("#rename-save").addEventListener("click", saveRenameModal);
+
+  // Enter inside any input also saves (common keyboard expectation)
+  $("#rename-inputs").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveRenameModal();
+    }
+  });
+  // Backdrop click closes the modal (only when clicking the dim overlay, not the white body)
+  $("#rename-modal").addEventListener("click", (e) => {
+    if (e.target.id === "rename-modal") closeRenameModal();
+  });
+  // Escape key closes it too
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !$("#rename-modal").hidden) closeRenameModal();
   });
 
   // Trip-code copy
