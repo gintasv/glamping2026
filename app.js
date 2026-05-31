@@ -93,14 +93,6 @@ function renderPark() {
 
   // Bullets
   $("#park-bullets").innerHTML = PARK.bullets.map((b) => `<li>${b}</li>`).join("");
-
-  // Gallery
-  $("#gallery").innerHTML = PHOTOS.gallery.map((g) => `
-    <figure>
-      <img src="${g.url}" alt="${g.caption}" loading="lazy" decoding="async">
-      <figcaption>${g.caption}</figcaption>
-    </figure>
-  `).join("");
 }
 
 // ──────────────────────────────────────────
