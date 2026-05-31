@@ -833,6 +833,9 @@ body {
   justify-content: center;
   padding: 0;
 }
+/* CRITICAL: author display:flex above overrides the UA `hidden` attribute,
+   so we have to opt back into display:none explicitly when hidden is set. */
+.modal[hidden] { display: none; }
 .modal__body {
   background: white;
   width: 100%;
