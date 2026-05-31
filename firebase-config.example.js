@@ -1,16 +1,22 @@
-// Copy this file to `firebase-config.js` and paste your Firebase project's
-// web app config here. Without it, the app runs in "Local only" mode.
+// Template for `firebase-config.js`. The real `firebase-config.js` is committed
+// to this repo and used by GitHub Pages. This example file just exists as a
+// reference for what the shape should look like.
 //
-// How to get this config (5 minutes, free):
+// IMPORTANT: this app expects you to set `window.FIREBASE_CONFIG = {...}`.
+// Do NOT paste Firebase's default `import { initializeApp } ...` snippet here —
+// that uses ES module imports which require a bundler. sync.js already loads
+// the Firebase SDK from the CDN; you only need to provide the config values.
+//
+// How to set this up (5 minutes, free):
 //   1. Go to https://console.firebase.google.com
-//   2. Click "Add project" → give it any name (e.g. "devils-lake-2026") → skip Analytics → Create
+//   2. Click "Add project" → give it any name → skip Analytics → Create
 //   3. From the project Overview page, click the </> Web icon to "Add app"
 //   4. Register the app with a nickname (no hosting needed) → it shows a config snippet
-//   5. Copy the values from that snippet into the object below
+//   5. Copy ONLY the values (apiKey, authDomain, etc.) into the object below
 //   6. In the left sidebar → Build → Firestore Database → Create database
-//        → start in "test mode" (lets the app read/write for 30 days; renew or set rules later)
+//        → start in "test mode"
 //        → pick the location closest to you
-//   7. Save this file as `firebase-config.js` and reload the app — sync pill should turn yellow ☁️ Synced
+//   7. Save this file as `firebase-config.js` and reload the app — sync pill turns ☁️ Synced
 
 window.FIREBASE_CONFIG = {
   apiKey: "YOUR_API_KEY",

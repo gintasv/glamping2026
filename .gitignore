@@ -1,5 +1,7 @@
-# Firebase secrets — never commit. Use firebase-config.example.js as the template.
-firebase-config.js
+# Note: firebase-config.js IS committed to this repo on purpose.
+# Firebase web SDK config values (apiKey, projectId, etc.) are PUBLIC by design —
+# they ship to every visitor's browser anyway. Security is enforced server-side
+# via Firestore rules, not by hiding the file.
 
 # OS / editor cruft
 .DS_Store
