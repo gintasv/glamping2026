@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#2d5a3d">
+  <meta name="theme-color" content="#3a5a44">
   <meta name="description" content="Devil's Lake State Park family camping info — Group Camp G3, June 18–22, 2026.">
-  <title>Devil's Lake Camp · G3 · Jun 18–22</title>
+  <title>Devil's Lake · G3 · Jun 18–22, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,10 +17,10 @@
 <!-- ───────── App shell ───────── -->
 <header class="app-header">
   <div class="trip-meta">
-    <div class="trip-meta__site">🏕️ <span>Group Camp G3</span></div>
+    <div class="trip-meta__site"><span>Group Camp · G3</span></div>
     <div class="trip-meta__dates">Jun 18–22, 2026</div>
   </div>
-  <div class="sync-pill" id="sync-pill" data-mode="local">📴 Local only</div>
+  <div class="sync-pill" id="sync-pill" data-mode="local">Offline</div>
 </header>
 
 <main id="screens">
@@ -35,10 +38,10 @@
       <h2>Getting there</h2>
       <p class="address" id="park-address"></p>
       <div class="row-buttons">
-        <a class="btn btn-primary" id="open-gmaps" target="_blank" rel="noopener">🗺️ Google Maps</a>
-        <a class="btn btn-secondary" id="open-amaps">🍎 Apple Maps</a>
+        <a class="btn btn-primary" id="open-gmaps" target="_blank" rel="noopener">Google Maps</a>
+        <a class="btn btn-secondary" id="open-amaps">Apple Maps</a>
       </div>
-      <a class="btn-link" id="call-park" href="tel:6083568301">📞 Park HQ · 608-356-8301</a>
+      <a class="btn-link" id="call-park" href="tel:6083568301">Park HQ &nbsp;·&nbsp; 608-356-8301</a>
     </div>
 
     <div class="card map-card">
@@ -53,7 +56,7 @@
     </div>
 
     <div class="card cell-card">
-      <h2>📶 Cell coverage</h2>
+      <h2>Cell coverage</h2>
       <p id="cell-summary"></p>
       <ul class="carrier-list" id="carrier-list"></ul>
       <p class="callout" id="cell-tip"></p>
@@ -65,7 +68,7 @@
     </div>
 
     <div class="card gallery-card">
-      <h2>The vibe</h2>
+      <h2>Gallery</h2>
       <div class="gallery" id="gallery"></div>
     </div>
   </section>
@@ -77,64 +80,64 @@
       <p class="subhead">Hikes, swims, and side trips. All vetted for kids 3–8.</p>
     </div>
 
-    <h2 class="section-title">🥾 Kid-friendly trails</h2>
+    <h2 class="section-title">Kid-friendly trails</h2>
     <div class="trail-grid" id="trail-grid"></div>
 
-    <h2 class="section-title">🛶 On the water</h2>
+    <h2 class="section-title">On the water</h2>
     <div class="card water-card" id="water-card"></div>
 
-    <h2 class="section-title">🎯 At the park</h2>
+    <h2 class="section-title">At the park</h2>
     <div class="activity-grid" id="activity-grid"></div>
 
-    <h2 class="section-title">🚗 Nearby</h2>
+    <h2 class="section-title">Nearby attractions</h2>
     <div class="nearby-grid" id="nearby-grid"></div>
   </section>
 
   <!-- ───────── 3. Eat ───────── -->
   <section class="screen" data-screen="eat" hidden>
     <div class="section-head">
-      <h1>Eat · Shop · Refuel</h1>
+      <h1>Eat, shop, refuel</h1>
       <p class="subhead">Groceries, gas, butchers, and the closest taprooms.</p>
     </div>
 
-    <h2 class="section-title">🛒 Groceries</h2>
+    <h2 class="section-title">Groceries</h2>
     <div class="biz-grid" id="biz-grocery"></div>
 
-    <h2 class="section-title">⛽ Gas</h2>
+    <h2 class="section-title">Gas</h2>
     <div class="biz-grid" id="biz-gas"></div>
 
-    <h2 class="section-title">🥩 Butcher</h2>
+    <h2 class="section-title">Butcher</h2>
     <div class="biz-grid" id="biz-butcher"></div>
 
-    <h2 class="section-title">🍻 Wine · Whiskey · Beer</h2>
+    <h2 class="section-title">Wine, whiskey, beer</h2>
     <div class="biz-grid" id="biz-drinks"></div>
   </section>
 
   <!-- ───────── 4. Safety ───────── -->
   <section class="screen" data-screen="safety" hidden>
     <div class="section-head">
-      <h1>Safety & emergencies</h1>
+      <h1>Safety &amp; emergencies</h1>
       <p class="subhead">Save these numbers in your phone before you leave service.</p>
     </div>
 
     <a class="emergency-card" href="tel:911">
-      <div class="emergency-card__big">🚨 911</div>
+      <div class="emergency-card__big">911</div>
       <div>
         <div class="emergency-card__head" id="emergency-head"></div>
         <div class="emergency-card__detail" id="emergency-detail"></div>
       </div>
     </a>
 
-    <h2 class="section-title">🏥 Hospitals</h2>
+    <h2 class="section-title">Hospitals</h2>
     <div id="hospital-list"></div>
 
-    <h2 class="section-title">☎️ Park contacts</h2>
+    <h2 class="section-title">Park contacts</h2>
     <div id="park-contacts"></div>
 
-    <h2 class="section-title">👶 Kids at Devil's Lake</h2>
+    <h2 class="section-title">Kids at Devil's Lake</h2>
     <ul class="safety-list" id="kid-safety"></ul>
 
-    <h2 class="section-title">🌧️ Weather</h2>
+    <h2 class="section-title">Weather</h2>
     <div class="card" id="weather-card"></div>
   </section>
 
@@ -142,16 +145,16 @@
   <section class="screen" data-screen="pack" hidden>
     <div class="pack-header">
       <h1>Shared packing list</h1>
-      <p class="subhead">Tap an item to claim it for your family. Everyone sees the updates live.</p>
+      <p class="subhead">Tap an item to claim it for your family. Everyone sees updates live.</p>
 
       <div class="family-row">
-        <label for="family-select" class="family-label">I'm:</label>
+        <label for="family-select" class="family-label">I'm</label>
         <select id="family-select" class="family-select"></select>
-        <button class="btn-tiny" id="rename-families">✏️ Rename</button>
+        <button class="btn-tiny" id="rename-families">Rename</button>
       </div>
 
       <div class="trip-code-row">
-        <span class="trip-code-label">Trip code:</span>
+        <span class="trip-code-label">Trip code</span>
         <code id="trip-code"></code>
         <button class="btn-tiny" id="copy-trip-code">Copy</button>
       </div>
@@ -161,20 +164,20 @@
         <button class="chip" data-filter="unclaimed">Unclaimed</button>
         <button class="chip" data-filter="mine">Mine</button>
         <button class="chip" data-filter="shared">Shared items</button>
-        <button class="chip" data-filter="essential">⚠️ Essentials</button>
+        <button class="chip" data-filter="essential">Essentials</button>
       </div>
 
       <div class="legend">
-        <span class="legend-item"><span class="dot dot--shared"></span> one for the whole group</span>
-        <span class="legend-item"><span class="dot dot--perfamily"></span> per family</span>
-        <span class="legend-item"><span class="dot dot--essential"></span> essential</span>
+        <span class="legend-item"><span class="dot dot--shared"></span> Group share</span>
+        <span class="legend-item"><span class="dot dot--perfamily"></span> Per family</span>
+        <span class="legend-item"><span class="dot dot--essential"></span> Essential</span>
       </div>
     </div>
 
     <div id="checklist"></div>
 
     <div class="reset-row">
-      <button class="btn btn-ghost" id="reset-claims">↺ Reset all claims</button>
+      <button class="btn btn-ghost" id="reset-claims">Reset all claims</button>
     </div>
   </section>
 
@@ -183,19 +186,34 @@
 <!-- ───────── Bottom nav ───────── -->
 <nav class="bottom-nav">
   <button class="nav-btn nav-btn--active" data-nav="park">
-    <span class="nav-icon">🏞️</span><span class="nav-label">Park</span>
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l5-9 4 7 3-5 6 7z"/><path d="M3 19h18"/></svg>
+    </span>
+    <span class="nav-label">Park</span>
   </button>
   <button class="nav-btn" data-nav="do">
-    <span class="nav-icon">🥾</span><span class="nav-label">Do</span>
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+    </span>
+    <span class="nav-label">Do</span>
   </button>
   <button class="nav-btn" data-nav="eat">
-    <span class="nav-icon">🍔</span><span class="nav-label">Eat</span>
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M5 7v12a1 1 0 001 1h12a1 1 0 001-1V7M9 4h6"/></svg>
+    </span>
+    <span class="nav-label">Eat</span>
   </button>
   <button class="nav-btn" data-nav="safety">
-    <span class="nav-icon">🚑</span><span class="nav-label">Safety</span>
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/><path d="M9 12h6M12 9v6"/></svg>
+    </span>
+    <span class="nav-label">Safety</span>
   </button>
   <button class="nav-btn" data-nav="pack">
-    <span class="nav-icon">🎒</span><span class="nav-label">Pack</span>
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a3 3 0 013-3h8a3 3 0 013 3v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z"/><path d="M9 5V4a3 3 0 016 0v1M5 13h14"/></svg>
+    </span>
+    <span class="nav-label">Pack</span>
   </button>
 </nav>
 

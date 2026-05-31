@@ -166,7 +166,7 @@ function renderDo() {
       ${WATER.pricing.map((p) => `<li><span>${p.item}</span><span class="price">${p.price}</span></li>`).join("")}
     </ul>
     <p><strong>Deposit:</strong> ${WATER.deposit}</p>
-    <a class="btn btn-primary" href="${telLink(WATER.concessionPhone)}">📞 Call ${WATER.concessionPhone}</a>
+    <a class="btn btn-primary" href="${telLink(WATER.concessionPhone)}">Call ${WATER.concessionPhone}</a>
   `;
 
   // Activities at the park
@@ -207,7 +207,7 @@ function bizCardHtml(biz) {
   if (biz.highlight) cls.push("highlight");
   if (biz.info) cls.push("info");
   const phoneBtn = biz.phone
-    ? `<a class="btn btn-secondary" href="${telLink(biz.phone)}">📞 Call</a>` : "";
+    ? `<a class="btn btn-secondary" href="${telLink(biz.phone)}">Call</a>` : "";
   const dirBtn = biz.address && !biz.info
     ? `<a class="btn btn-primary" href="${gmapsDir(biz.address)}" target="_blank" rel="noopener">Directions</a>` : "";
   return `
@@ -215,9 +215,9 @@ function bizCardHtml(biz) {
       <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
       <p class="biz-blurb">${biz.blurb}</p>
       <div class="biz-meta">
-        ${biz.address ? `<div><strong>📍</strong> ${biz.address}</div>` : ""}
-        ${biz.phone ? `<div><strong>📞</strong> ${biz.phone}</div>` : ""}
-        ${biz.hours ? `<div><strong>🕒</strong> ${biz.hours}</div>` : ""}
+        ${biz.address ? `<div><strong>Address</strong> ${biz.address}</div>` : ""}
+        ${biz.phone ? `<div><strong>Phone</strong> ${biz.phone}</div>` : ""}
+        ${biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : ""}
       </div>
       ${(phoneBtn || dirBtn) ? `<div class="biz-actions">${dirBtn}${phoneBtn}</div>` : ""}
     </article>
@@ -243,7 +243,7 @@ function renderSafety() {
       <h3>${h.name}</h3>
       <div class="meta">${h.distance} · ${h.address}</div>
       <div class="actions">
-        <a class="btn btn-primary" href="${telLink(h.phone)}">📞 ${h.phone}</a>
+        <a class="btn btn-primary" href="${telLink(h.phone)}">Call ${h.phone}</a>
         <a class="btn btn-secondary" href="${gmapsDir(h.address)}" target="_blank" rel="noopener">Directions</a>
       </div>
     </article>
@@ -266,8 +266,8 @@ function renderSafety() {
       <div class="stat"><div class="stat-value">56°F</div><div class="stat-label">Avg low</div></div>
       <div class="stat"><div class="stat-value">5.58"</div><div class="stat-label">Rain</div></div>
     </div>
-    <p class="weather-warn">⚠️ ${SAFETY.weather.rainNote}</p>
-    <a class="btn btn-primary" href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Live NWS forecast →</a>
+    <p class="weather-warn">${SAFETY.weather.rainNote}</p>
+    <a class="btn btn-primary" href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Live NWS forecast</a>
   `;
 }
 
@@ -551,10 +551,10 @@ function updateSyncPill(mode) {
   const pill = $("#sync-pill");
   if (mode === "cloud") {
     pill.dataset.mode = "cloud";
-    pill.textContent = "☁️ Synced";
+    pill.textContent = "● Live sync";
   } else {
     pill.dataset.mode = "local";
-    pill.textContent = "📴 Local only";
+    pill.textContent = "Offline";
   }
 }
 

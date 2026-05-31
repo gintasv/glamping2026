@@ -363,12 +363,12 @@ const SAFETY = {
     { name: "Devil's Lake Concessions (boat rentals)", phone: "608-356-3381" },
   ],
   kidSafety: [
-    "🪨 Stay back from bluff edges — the drops are 500 feet and unfenced.",
-    "🦟 Tick + mosquito check after every hike. June is peak season.",
-    "👟 Water shoes on the rocky lake bottom — slippery quartzite under the sand.",
-    "🏊 Swim only at the lifeguarded beaches (North Shore + South Shore).",
-    "🌳 Buddy system at the campsite — kids in pairs, adults in eyeline.",
-    "🔦 Each kid gets a glowstick or headlamp at dusk — easy to spot.",
+    "Stay back from bluff edges — the drops are 500 feet and unfenced.",
+    "Tick and mosquito check after every hike. June is peak season.",
+    "Water shoes on the rocky lake bottom — slippery quartzite under the sand.",
+    "Swim only at the lifeguarded beaches (North Shore and South Shore).",
+    "Buddy system at the campsite — kids in pairs, adults in eyeline.",
+    "Each kid gets a glowstick or headlamp at dusk — easy to spot in the woods.",
   ],
   weather: {
     summary: "June averages: high 79°F / low 56°F / 5.58 in rain (wettest month of the year here).",
