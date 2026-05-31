@@ -9,9 +9,8 @@ const TRIP = {
   endDate: "2026-06-22",
   parkAddress: "S5975 Park Rd, Baraboo, WI 53913",
   parkPhone: "608-356-8301",
-  // Approximate coordinates for the Group Camp area at Devil's Lake State Park
-  // (refined to the east-side group camp loop)
-  coords: { lat: 43.4267, lon: -89.7351 },
+  // Exact coordinates for Group Camp Site G3
+  coords: { lat: 43.40955652, lon: -89.71321280 },
 };
 
 const PARK = {
@@ -373,7 +372,7 @@ const SAFETY = {
   weather: {
     summary: "June averages: high 79°F / low 56°F / 5.58 in rain (wettest month of the year here).",
     rainNote: "Plan for at least one rain day in 5. Pack a tarp for the picnic area.",
-    nwsUrl: "https://forecast.weather.gov/MapClick.php?lat=43.4267&lon=-89.7351",
+    nwsUrl: "https://forecast.weather.gov/MapClick.php?lat=43.4096&lon=-89.7132",
   },
 };
 
@@ -427,7 +426,7 @@ const PHOTOS = {
 
 // Map points (lat/lon) for the Leaflet mini-map
 const MAP_POINTS = [
-  { id: "g3", label: "🏕️ Group Camp G3", lat: 43.4267, lon: -89.7351, primary: true },
+  { id: "g3", label: "🏕️ Group Camp G3", lat: 43.40955652, lon: -89.71321280, primary: true },
   { id: "south-shore", label: "🏖️ South Shore Beach", lat: 43.4205, lon: -89.7305 },
   { id: "north-shore", label: "🏖️ North Shore Beach", lat: 43.4385, lon: -89.7300 },
   { id: "nature-center", label: "🦋 Nature Center", lat: 43.4194, lon: -89.7322 },
