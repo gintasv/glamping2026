@@ -112,7 +112,7 @@ function renderMap() {
   const center = [TRIP.coords.lat, TRIP.coords.lon];
   mapInstance = L.map("park-map", {
     center,
-    zoom: 14,
+    zoom: 16,
     scrollWheelZoom: false,
   });
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

@@ -424,14 +424,11 @@ const PHOTOS = {
   },
 };
 
-// Map points (lat/lon) for the Leaflet mini-map
+// Map points (lat/lon) for the Leaflet mini-map.
+// Only the campsite is plotted — other park amenities and the hospital
+// will be added back if/when we have verified coordinates for each.
 const MAP_POINTS = [
-  { id: "g3", label: "🏕️ Group Camp G3", lat: 43.40955652, lon: -89.71321280, primary: true },
-  { id: "south-shore", label: "🏖️ South Shore Beach", lat: 43.4205, lon: -89.7305 },
-  { id: "north-shore", label: "🏖️ North Shore Beach", lat: 43.4385, lon: -89.7300 },
-  { id: "nature-center", label: "🦋 Nature Center", lat: 43.4194, lon: -89.7322 },
-  { id: "park-hq", label: "🏛️ Park HQ", lat: 43.4170, lon: -89.7300 },
-  { id: "hospital", label: "🏥 St. Clare Hospital", lat: 43.4753, lon: -89.7515 },
+  { id: "g3", label: "Group Camp G3", lat: 43.40955652, lon: -89.71321280, primary: true },
 ];
 
 window.TRIP_DATA = {
