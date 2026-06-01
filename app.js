@@ -93,9 +93,11 @@ function gmapsPlace(query) {
 function renderPark() {
   $("#park-about").textContent = PARK.about;
 
-  $("#park-address").textContent = TRIP.parkAddress;
-  $("#open-gmaps").href = gmapsDir(TRIP.parkAddress);
-  $("#open-amaps").href = applyMapsLink(TRIP.parkAddress);
+  // Show the park's official address for reference, but route the map buttons
+  // to the actual G3 coordinate — the park office is ~3 mi from the group camp.
+  $("#park-address").textContent = `Park office / main entrance · ${TRIP.parkAddress}`;
+  $("#open-gmaps").href = gmapsDir(TRIP.coords);
+  $("#open-amaps").href = applyMapsLink(TRIP.coords);
 
   // Amenities
   $("#amenities-list").innerHTML = CAMPSITE.amenities.map((a) => `
