@@ -566,6 +566,17 @@ a { color: inherit; }
 .trail-card__desc, .nearby-card__desc {
   font-size: 13px; color: var(--ink-500); margin: 0; line-height: 1.5;
 }
+.trail-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+}
+.trail-map-link:hover { color: var(--accent-strong); text-decoration: underline; }
 .kid-appeal {
   color: var(--warn);
   font-size: 12px;

@@ -262,6 +262,7 @@ function renderDo() {
           <span class="pill pill--age">${t.kidAges}</span>
         </div>
         <p class="trail-card__desc">${t.description}</p>
+        <a class="trail-map-link" href="${gmapsPlace(`${t.name}, Devil's Lake State Park, Baraboo, WI`)}" target="_blank" rel="noopener">View on map <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
       </div>
     </article>
   `).join("") + `<p class="trail-card__credit">Trail photos via <a href="https://commons.wikimedia.org/wiki/Category:Devil%27s_Lake_State_Park_(Wisconsin)" target="_blank" rel="noopener">Wikimedia Commons</a></p>`;
