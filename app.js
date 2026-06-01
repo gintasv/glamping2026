@@ -27,6 +27,16 @@ const ICONS = {
     `<svg ${SVG_ATTRS}><path d="M12 2c1 3 5 5 5 10a5 5 0 01-10 0c0-2 1-4 3-5a4 4 0 002-5z"/></svg>`,
   car:
     `<svg ${SVG_ATTRS}><path d="M5 17l-1-5 2-5h12l2 5-1 5"/><path d="M5 17v2h3v-2"/><path d="M16 17v2h3v-2"/><circle cx="8" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg>`,
+  wave:
+    `<svg ${SVG_ATTRS}><path d="M3 13c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2"/><path d="M3 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2"/></svg>`,
+  boat:
+    `<svg ${SVG_ATTRS}><path d="M12 3v12"/><path d="M12 5l6 8h-6z"/><path d="M5 16h14l-2 4H7z"/></svg>`,
+  leaf:
+    `<svg ${SVG_ATTRS}><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14z"/><path d="M5 19c3-4 6-6 10-8"/></svg>`,
+  mountain:
+    `<svg ${SVG_ATTRS}><path d="M3 20l5-9 4 6 3-5 6 8z"/></svg>`,
+  flag:
+    `<svg ${SVG_ATTRS}><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`,
 };
 function renderIcon(name) {
   return ICONS[name] || name;
@@ -91,11 +101,23 @@ function gmapsPlace(query) {
 // Render: Park tab
 // ──────────────────────────────────────────
 function renderPark() {
-  // About the park — description, amenities, main office, website
+  // About the park — lead, headline stats, feature grid, official link
   $("#park-desc").textContent = PARK.about;
-  $("#park-bullets").innerHTML = PARK.bullets.map((b) => `<li>${b}</li>`).join("");
-  $("#park-office").textContent = `${TRIP.parkAddress} · ${TRIP.parkPhone}`;
-  $("#park-call").href = telLink(TRIP.parkPhone);
+  $("#park-stats").innerHTML = PARK.stats.map((s) => `
+    <div class="park-stat">
+      <div class="park-stat__value">${s.value}</div>
+      <div class="park-stat__label">${s.label}</div>
+    </div>
+  `).join("");
+  $("#park-features").innerHTML = PARK.features.map((f) => `
+    <li>
+      <span class="feature-icon">${renderIcon(f.icon)}</span>
+      <div>
+        <div class="feature-title">${f.title}</div>
+        <div class="feature-detail">${f.detail}</div>
+      </div>
+    </li>
+  `).join("");
   $("#park-link").href = TRIP.parkWebsite;
 
   // Cell coverage
@@ -165,16 +187,19 @@ async function renderForecast() {
     if (!res.ok) throw new Error(`forecast ${res.status}`);
     const d = (await res.json()).daily;
     row.innerHTML = d.time.map((iso, i) => {
-      const dow = new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { weekday: "short" });
+      const date = new Date(`${iso}T12:00:00`);
+      const dow = date.toLocaleDateString("en-US", { weekday: "short" });
+      const md = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
       const { svg, label } = weatherIcon(d.weather_code[i]);
       return `
         <div class="forecast-day">
           <span class="forecast-day__dow">${dow}</span>
+          <span class="forecast-day__date">${md}</span>
           <span class="forecast-day__icon" role="img" aria-label="${label}">${svg}</span>
           <span class="forecast-day__temp"><span class="forecast-day__hi">${Math.round(d.temperature_2m_max[i])}°</span> <span class="forecast-day__lo">${Math.round(d.temperature_2m_min[i])}°</span></span>
         </div>`;
     }).join("");
-    note.textContent = "Live forecast for the campsite · Open-Meteo";
+    note.innerHTML = `Live forecast for the campsite · <a href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Full forecast &amp; details →</a>`;
   } catch (err) {
     // Offline or API unreachable — fall back to June normals + NWS link.
     row.innerHTML = `<p class="forecast-fallback">${SAFETY.weather.summary}</p>`;

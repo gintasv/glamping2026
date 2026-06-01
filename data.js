@@ -19,14 +19,19 @@ const TRIP = {
 
 const PARK = {
   about:
-    "Devil's Lake State Park is Wisconsin's most-visited state park — a 360-acre spring-fed lake ringed by 500-foot quartzite bluffs, with 29+ miles of trails, two sand beaches, a Nature Center, and rock-climbing on some of the best quartzite in the Midwest.",
-  bullets: [
-    "29+ miles of hiking trails across 16 named trails",
-    "Two sandy swim beaches: North Shore and South Shore",
-    "Boat, kayak, SUP, and paddleboat rentals at both shores",
-    "Nature Center with hands-on kids' exploration room",
-    "Quartzite-bluff rock climbing (advanced; guides available)",
-    "Sections of the National Ice Age Trail pass through",
+    "Wisconsin's most-visited state park — a spring-fed lake cradled by ancient quartzite bluffs, with two sand beaches, miles of bluff-top trails, and some of the best rock climbing in the Midwest.",
+  stats: [
+    { value: "360", label: "acre lake" },
+    { value: "500 ft", label: "quartzite bluffs" },
+    { value: "29+ mi", label: "of trails" },
+  ],
+  features: [
+    { icon: "walk",     title: "29+ mi of trails",     detail: "16 named routes" },
+    { icon: "wave",     title: "Two sand beaches",     detail: "North & South Shore" },
+    { icon: "boat",     title: "Boat & kayak rentals", detail: "SUPs, paddleboats too" },
+    { icon: "leaf",     title: "Nature Center",        detail: "Hands-on kids' room" },
+    { icon: "mountain", title: "Rock climbing",        detail: "Quartzite bluffs; guides" },
+    { icon: "flag",     title: "Ice Age Trail",        detail: "Runs through the park" },
   ],
 };
 
