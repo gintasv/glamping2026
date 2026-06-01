@@ -58,13 +58,13 @@
     <!-- Your campsite -->
     <h2 class="section-title">Your campsite</h2>
     <div class="card">
-      <h2 id="campsite-name"></h2>
-      <ul class="reservation-list">
-        <li><span class="res-label">Dates</span> <span id="res-dates"></span></li>
-        <li><span class="res-label">Check-in</span> <span id="res-checkin"></span></li>
-        <li><span class="res-label">Check-out</span> <span id="res-checkout"></span></li>
-      </ul>
-      <a class="btn btn-primary" id="reserve-link" target="_blank" rel="noopener">Campground &amp; reservations</a>
+      <p class="res-site" id="campsite-name"></p>
+      <p class="res-dates-line" id="res-dates"></p>
+      <div class="res-times">
+        <div class="park-stat"><div class="park-stat__value" id="res-checkin"></div><div class="park-stat__label">Check-in</div></div>
+        <div class="park-stat"><div class="park-stat__value" id="res-checkout"></div><div class="park-stat__label">Check-out</div></div>
+      </div>
+      <a class="park-site-link" id="reserve-link" target="_blank" rel="noopener">Campground &amp; reservations <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
     </div>
 
     <div class="card map-card">

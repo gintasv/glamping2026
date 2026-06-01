@@ -131,8 +131,9 @@ function renderPark() {
   `).join("");
 
   // Your campsite — reservation + campground link
+  const nights = Math.round((new Date(TRIP.endDate) - new Date(TRIP.startDate)) / 86400000);
   $("#campsite-name").textContent = CAMPSITE.name;
-  $("#res-dates").textContent = TRIP.dates;
+  $("#res-dates").textContent = `${TRIP.dates} · ${nights} night${nights === 1 ? "" : "s"}`;
   $("#res-checkin").textContent = TRIP.checkIn;
   $("#res-checkout").textContent = TRIP.checkOut;
   $("#reserve-link").href = TRIP.reservationUrl;
@@ -188,11 +189,11 @@ async function renderForecast() {
     const d = (await res.json()).daily;
     row.innerHTML = d.time.map((iso, i) => {
       const date = new Date(`${iso}T12:00:00`);
-      const dow = date.toLocaleDateString("en-US", { weekday: "short" });
+      const dow = i === 0 ? "Today" : date.toLocaleDateString("en-US", { weekday: "short" });
       const md = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
       const { svg, label } = weatherIcon(d.weather_code[i]);
       return `
-        <div class="forecast-day">
+        <div class="forecast-day${i === 0 ? " forecast-day--today" : ""}">
           <span class="forecast-day__dow">${dow}</span>
           <span class="forecast-day__date">${md}</span>
           <span class="forecast-day__icon" role="img" aria-label="${label}">${svg}</span>

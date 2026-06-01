@@ -289,9 +289,9 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-2);
+  background: var(--accent-tint);
   border-radius: var(--r-sm);
-  color: var(--ink-700);
+  color: var(--accent);
 }
 .amenity-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; color: var(--ink-900); }
 .amenity-detail { color: var(--ink-500); font-size: 13px; line-height: 1.45; }
@@ -426,13 +426,21 @@ a { color: inherit; }
 }
 .forecast-day {
   flex: 0 0 auto;
-  min-width: 50px;
+  min-width: 54px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 4px 2px;
+  padding: 8px 4px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
 }
+.forecast-day--today {
+  background: var(--accent-tint);
+  border-color: var(--accent-tint);
+}
+.forecast-day--today .forecast-day__dow { color: var(--accent-strong); }
+.forecast-day--today .forecast-day__date { color: var(--accent); }
 .forecast-day__dow {
   font-size: 11px;
   font-weight: 700;
@@ -450,19 +458,15 @@ a { color: inherit; }
 .forecast-note a:hover { text-decoration: underline; }
 .forecast-fallback { color: var(--ink-700); font-size: 14px; }
 
-/* ───────── Reservation key/value list ───────── */
-.reservation-list { list-style: none; margin: 0 0 14px; padding: 0; }
-.reservation-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-  color: var(--ink-700);
+/* ───────── Campsite reservation ───────── */
+.res-site { font-size: 16px; font-weight: 700; color: var(--ink-900); margin: 0 0 2px; letter-spacing: -0.01em; }
+.res-dates-line { font-size: 14px; color: var(--ink-500); margin: 0; }
+.res-times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 14px 0 0;
 }
-.reservation-list li:last-child { border-bottom: none; }
-.reservation-list .res-label { color: var(--ink-500); font-weight: 600; }
 
 .leaflet-popup-content { font-size: 13px; font-family: var(--font-sans); }
 .leaflet-popup-content a {
