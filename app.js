@@ -81,6 +81,11 @@ function applyMapsLink(addressOrCoords) {
   }
   return `https://maps.apple.com/?daddr=${addressOrCoords.lat},${addressOrCoords.lon}`;
 }
+// A Google Maps *location* link (drops a pin / opens the place), as opposed to
+// gmapsDir which starts turn-by-turn navigation.
+function gmapsPlace(query) {
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+}
 
 // ──────────────────────────────────────────
 // Render: Park tab
@@ -220,12 +225,17 @@ function bizCardHtml(biz) {
   const cls = [];
   if (biz.highlight) cls.push("highlight");
   if (biz.info) cls.push("info");
-  const dirBtn = biz.address && !biz.info
-    ? `<a class="btn btn-primary" href="${gmapsDir(biz.address)}" target="_blank" rel="noopener">Directions</a>` : "";
+  // Google Maps location (pin), not directions. Use name + address for an
+  // accurate pin when an address is available.
+  const mapBtn = biz.address && !biz.info
+    ? `<a class="btn btn-primary" href="${gmapsPlace(`${biz.name}, ${biz.address}`)}" target="_blank" rel="noopener">Google Maps</a>` : "";
+  const siteBtn = biz.website
+    ? `<a class="btn btn-secondary" href="${biz.website}" target="_blank" rel="noopener">Website</a>` : "";
   // Phone number stays tap-to-call from the meta row, but the big Call button is gone.
   const phoneMeta = biz.phone
     ? `<div><strong>Phone</strong> <a class="meta-tel" href="${telLink(biz.phone)}">${biz.phone}</a></div>`
     : "";
+  const actions = [mapBtn, siteBtn].filter(Boolean).join("");
   return `
     <article class="biz-card ${cls.join(" ")}">
       <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
@@ -235,7 +245,7 @@ function bizCardHtml(biz) {
         ${phoneMeta}
         ${biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : ""}
       </div>
-      ${dirBtn ? `<div class="biz-actions">${dirBtn}</div>` : ""}
+      ${actions ? `<div class="biz-actions">${actions}</div>` : ""}
     </article>
   `;
 }

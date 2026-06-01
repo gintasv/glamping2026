@@ -252,6 +252,7 @@ const EAT_SHOP = {
       address: "Baraboo, WI",
       phone: null,
       hours: "Daily 4 AM – midnight",
+      website: "https://baraboofreshmarket.com/pierces-express-market/",
       highlight: true,
     },
     {
@@ -260,6 +261,7 @@ const EAT_SHOP = {
       address: "921 WI-136, Baraboo, WI 53913",
       phone: "608-355-9300",
       hours: "Daily 6 AM – 11 PM (check)",
+      website: "https://www.walmart.com/store/1396-baraboo-wi",
     },
     {
       name: "Baraboo Fresh Market",
@@ -267,6 +269,7 @@ const EAT_SHOP = {
       address: "Downtown Baraboo, WI",
       phone: null,
       hours: "Daily",
+      website: "https://baraboofreshmarket.com/",
     },
   ],
   gas: [
@@ -276,6 +279,7 @@ const EAT_SHOP = {
       address: "Baraboo, WI",
       phone: null,
       hours: "Daily 4 AM – midnight",
+      website: "https://baraboofreshmarket.com/pierces-express-market/",
       highlight: true,
     },
     {
@@ -294,6 +298,7 @@ const EAT_SHOP = {
       address: "Baraboo, WI",
       phone: null,
       hours: "Mon–Sat",
+      website: "https://meatmarketbaraboo.com/",
     },
     {
       name: "Straka Meats",
@@ -301,6 +306,7 @@ const EAT_SHOP = {
       address: "1019 Cedar St, Plain, WI 53577",
       phone: "608-546-2851",
       hours: "Mon–Sat",
+      website: "https://strakameats.com/",
       highlight: true,
     },
   ],
@@ -312,6 +318,7 @@ const EAT_SHOP = {
       address: "300 Water St, Baraboo, WI 53913",
       phone: "608-356-3019",
       hours: "Open daily, hours vary",
+      website: "https://driftlessglen.com/",
       highlight: true,
       kidFriendly: true,
     },
@@ -321,6 +328,7 @@ const EAT_SHOP = {
       address: "1065 Walnut St, Baraboo, WI 53913",
       phone: "608-356-9463",
       hours: "Check website",
+      website: "https://www.balancedrockwinery.com/",
     },
     {
       name: "Tumbled Rock Brewery & Kitchen",
@@ -328,6 +336,7 @@ const EAT_SHOP = {
       address: "S5718 WI-136, Baraboo, WI 53913",
       phone: "608-355-3700",
       hours: "Daily lunch + dinner",
+      website: "https://tumbledrock.com/",
       kidFriendly: true,
     },
   ],
