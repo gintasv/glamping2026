@@ -37,6 +37,10 @@ const ICONS = {
     `<svg ${SVG_ATTRS}><path d="M3 20l5-9 4 6 3-5 6 8z"/></svg>`,
   flag:
     `<svg ${SVG_ATTRS}><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`,
+  fish:
+    `<svg ${SVG_ATTRS}><path d="M3 12c4-6 11-6 15 0-4 6-11 6-15 0z"/><path d="M18 12l3-3v6z"/><circle cx="8" cy="10.5" r="0.6"/></svg>`,
+  ball:
+    `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 010 18M3 12h18M5.6 6.5c3.5 2.2 9.3 2.2 12.8 0M5.6 17.5c3.5-2.2 9.3-2.2 12.8 0"/></svg>`,
 };
 function renderIcon(name) {
   return ICONS[name] || name;
@@ -278,7 +282,7 @@ function renderDo() {
   // Activities at the park
   $("#activity-grid").innerHTML = ACTIVITIES_AT_PARK.map((a) => `
     <article class="activity-card">
-      <div class="ico">${a.icon}</div>
+      <div class="ico">${renderIcon(a.icon)}</div>
       <div>
         <h3>${a.title}</h3>
         <p>${a.description}</p>
@@ -296,7 +300,7 @@ function renderDo() {
         </div>
         <p class="nearby-card__desc">${n.description}</p>
         <div class="kid-appeal">${n.kidAppeal}</div>
-        <div style="margin-top:8px">
+        <div class="nearby-actions">
           <a class="btn btn-primary" href="${gmapsDir(n.address)}" target="_blank" rel="noopener">Directions</a>
         </div>
       </div>
@@ -325,16 +329,20 @@ function bizCardHtml(biz) {
     ? `<div><strong>Phone</strong> <a class="meta-tel" href="${telLink(biz.phone)}">${biz.phone}</a></div>`
     : "";
   const actions = [mapBtn, siteBtn, priceBtn].filter(Boolean).join("");
+  const distPill = biz.distance ? `<span class="biz-dist">${biz.distance}</span>` : "";
+  const metaRows = [
+    biz.address ? `<div><strong>Address</strong> ${biz.address}</div>` : "",
+    phoneMeta,
+    biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : "",
+  ].filter(Boolean).join("");
   return `
     <article class="biz-card ${cls.join(" ")}">
-      <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
-      <p class="biz-blurb">${biz.blurb}</p>
-      <div class="biz-meta">
-        ${biz.address ? `<div><strong>Address</strong> ${biz.address}</div>` : ""}
-        ${biz.distance ? `<div><strong>From camp</strong> ${biz.distance}</div>` : ""}
-        ${phoneMeta}
-        ${biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : ""}
+      <div class="biz-card__head">
+        <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
+        ${distPill}
       </div>
+      <p class="biz-blurb">${biz.blurb}</p>
+      ${metaRows ? `<div class="biz-meta">${metaRows}</div>` : ""}
       ${actions ? `<div class="biz-actions">${actions}</div>` : ""}
     </article>
   `;
@@ -487,7 +495,21 @@ function slugify(s) {
 function renderPack(state) {
   $("#family-select").innerHTML = familyOptions(state);
   $("#trip-code").textContent = state.tripCode;
+  renderProgress(state);
   renderChecklist(state);
+}
+
+function renderProgress(state) {
+  const ids = window.CHECKLIST.flatMap((g) =>
+    g.subgroups.flatMap((sg) =>
+      sg.items.map((it) => `${slugify(g.group)}.${slugify(sg.name)}.${slugify(it.name)}`)));
+  const total = ids.length;
+  const claimed = ids.filter((id) => (state.claims[id] || []).length > 0).length;
+  const pct = total ? Math.round((claimed / total) * 100) : 0;
+  $("#pack-progress").innerHTML = `
+    <div class="pack-progress__bar"><span style="width:${pct}%"></span></div>
+    <div class="pack-progress__label">${claimed} of ${total} items claimed</div>
+  `;
 }
 
 // ──────────────────────────────────────────

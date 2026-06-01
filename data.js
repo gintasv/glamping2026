@@ -153,35 +153,35 @@ const ACTIVITIES_AT_PARK = [
   {
     id: "beaches",
     title: "Swim Beaches",
-    icon: "🏖️",
+    icon: "wave",
     description:
       "Two sandy beaches — North Shore and South Shore — both lifeguarded in summer. South Shore has the playground and is closer to your campsite.",
   },
   {
     id: "nature-center",
     title: "Nature Center",
-    icon: "🦋",
+    icon: "leaf",
     description:
       "Hands-on displays plus a kids' exploration room with puzzles, mystery boxes, and games. Great rainy-hour backup.",
   },
   {
     id: "climbing",
     title: "Rock Climbing",
-    icon: "🧗",
+    icon: "mountain",
     description:
       "Quartzite bluffs — some of the best climbing in the Midwest. Advanced. Several guide services in Baraboo can take adults + older kids out with proper gear.",
   },
   {
     id: "fishing",
     title: "Fishing",
-    icon: "🎣",
+    icon: "fish",
     description:
       "Lake holds bass, panfish, walleye, and pike. WI fishing license required for 16+. Pier on the south shore.",
   },
   {
     id: "playground",
     title: "Playground",
-    icon: "🛝",
+    icon: "ball",
     description:
       "Right by the South Shore beach, with flush toilets next to it. Perfect for the 3–5 year-olds.",
   },

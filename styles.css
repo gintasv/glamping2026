@@ -572,6 +572,7 @@ a { color: inherit; }
   margin-top: 6px;
   letter-spacing: 0.5px;
 }
+.nearby-actions { margin-top: 10px; }
 
 /* ───────── Water card ───────── */
 .water-card { padding: 18px; }
@@ -621,16 +622,15 @@ a { color: inherit; }
   align-items: start;
 }
 .activity-card .ico {
-  font-size: 18px;
-  line-height: 1;
+  line-height: 0;
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-2);
+  background: var(--accent-tint);
   border-radius: var(--r-sm);
-  color: var(--ink-700);
+  color: var(--accent);
 }
 .activity-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.01em; }
 .activity-card p { margin: 0; font-size: 13px; color: var(--ink-500); line-height: 1.5; }
@@ -654,12 +654,28 @@ a { color: inherit; }
   background: var(--surface-2);
   border-style: dashed;
 }
+.biz-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
 .biz-card h3 {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
   color: var(--ink-900);
   letter-spacing: -0.01em;
+}
+.biz-dist {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--accent-tint);
+  color: var(--accent-strong);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 .biz-blurb { font-size: 13px; color: var(--ink-700); margin: 0; line-height: 1.5; }
 .biz-meta {
@@ -761,6 +777,27 @@ a { color: inherit; }
   font-weight: 700;
 }
 .pack-header .subhead { color: var(--ink-500); font-size: 13px; margin: 0 0 14px; }
+
+.pack-progress { margin: 0 0 16px; }
+.pack-progress__bar {
+  height: 8px;
+  background: var(--surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pack-progress__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.pack-progress__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-500);
+  margin-top: 6px;
+}
 
 .family-row {
   display: flex;
