@@ -9,6 +9,30 @@ const { TRIP, PARK, CAMPSITE, TRAILS, WATER, ACTIVITIES_AT_PARK, NEARBY, EAT_SHO
   window.TRIP_DATA;
 
 // ──────────────────────────────────────────
+// Inline SVG icons (Lucide-inspired, 16×16, currentColor stroke)
+// ──────────────────────────────────────────
+const SVG_ATTRS = `width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"`;
+const ICONS = {
+  tree:
+    `<svg ${SVG_ATTRS}><path d="M12 3l-4 6h2l-3 5h2l-3 4h12l-3-4h2l-3-5h2z"/><line x1="12" y1="18" x2="12" y2="22"/></svg>`,
+  restroom:
+    `<svg ${SVG_ATTRS}><circle cx="12" cy="5" r="2"/><path d="M9 22v-7H7l2.5-6h5l2.5 6h-2v7"/></svg>`,
+  shower:
+    `<svg ${SVG_ATTRS}><path d="M6 5h11"/><path d="M17 5v6"/><line x1="9" y1="14" x2="8" y2="17"/><line x1="13" y1="14" x2="12" y2="17"/><line x1="17" y1="14" x2="16" y2="17"/><line x1="11" y1="19" x2="10" y2="22"/><line x1="15" y1="19" x2="14" y2="22"/></svg>`,
+  drop:
+    `<svg ${SVG_ATTRS}><path d="M12 3c-4 5-6 9-6 12a6 6 0 0012 0c0-3-2-7-6-12z"/></svg>`,
+  walk:
+    `<svg ${SVG_ATTRS}><circle cx="13" cy="4" r="2"/><path d="M11 9l3-2 2 4-2 3 3 5"/><path d="M9 13l-3 2 1 5"/></svg>`,
+  flame:
+    `<svg ${SVG_ATTRS}><path d="M12 2c1 3 5 5 5 10a5 5 0 01-10 0c0-2 1-4 3-5a4 4 0 002-5z"/></svg>`,
+  car:
+    `<svg ${SVG_ATTRS}><path d="M5 17l-1-5 2-5h12l2 5-1 5"/><path d="M5 17v2h3v-2"/><path d="M16 17v2h3v-2"/><circle cx="8" cy="14" r="1.2"/><circle cx="16" cy="14" r="1.2"/></svg>`,
+};
+function renderIcon(name) {
+  return ICONS[name] || name;
+}
+
+// ──────────────────────────────────────────
 // UI state (separate from sync state)
 // ──────────────────────────────────────────
 const LS_UI_KEY = "camp:ui";
@@ -72,7 +96,7 @@ function renderPark() {
   // Amenities
   $("#amenities-list").innerHTML = CAMPSITE.amenities.map((a) => `
     <li>
-      <div class="amenity-icon">${a.icon}</div>
+      <div class="amenity-icon">${renderIcon(a.icon)}</div>
       <div>
         <div class="amenity-title">${a.title}</div>
         <div class="amenity-detail">${a.detail}</div>

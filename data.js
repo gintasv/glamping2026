@@ -29,13 +29,13 @@ const PARK = {
 const CAMPSITE = {
   name: "Group Camp Site G3",
   amenities: [
-    { icon: "🪵", title: "Heavily wooded", detail: "Lots of shade. Ground is dirt + leaves — pack tarps for under tents." },
-    { icon: "🚻", title: "Pit toilets at site", detail: "Right at the loop." },
-    { icon: "🚿", title: "Modern showers & flush restrooms", detail: "A short walk from the site." },
-    { icon: "🚰", title: "Water pump on the loop", detail: "Haul water back to your site in jugs." },
-    { icon: "🏖️", title: "~15-min walk to South Shore beach", detail: "Via the Group Camp Trail." },
-    { icon: "🔥", title: "Fire ring & picnic tables", detail: "Standard at group sites. Bring chairs." },
-    { icon: "🚗", title: "Parking on the loop", detail: "Carry gear in from the lot." },
+    { icon: "tree",     title: "Heavily wooded", detail: "Lots of shade. Ground is dirt and leaves — pack tarps for under tents." },
+    { icon: "restroom", title: "Pit toilets at site", detail: "Right at the loop." },
+    { icon: "shower",   title: "Modern showers and flush restrooms", detail: "A short walk from the site." },
+    { icon: "drop",     title: "Water pump on the loop", detail: "Haul water back to your site in jugs." },
+    { icon: "walk",     title: "15-minute walk to South Shore beach", detail: "Via the Group Camp Trail." },
+    { icon: "flame",    title: "Fire ring and picnic tables", detail: "Standard at group sites. Bring chairs." },
+    { icon: "car",      title: "Parking on the loop", detail: "Carry gear in from the lot." },
   ],
   cell: {
     summary:
