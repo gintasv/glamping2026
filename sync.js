@@ -15,7 +15,23 @@ const DEFAULT_FAMILIES = [
   { id: "fam-3", name: "Family 3" },
   { id: "fam-4", name: "Family 4" },
   { id: "fam-5", name: "Family 5" },
+  { id: "fam-6", name: "Family 6" },
+  { id: "fam-7", name: "Family 7" },
 ];
+
+// Keep any existing families (preserving renames) and append any default
+// families not already present by id — so adding slots #6/#7 migrates old
+// saved state additively instead of resetting names.
+function normalizeFamilies(families) {
+  const valid = (Array.isArray(families) ? families : []).filter(
+    (f) => f && typeof f.id === "string" && typeof f.name === "string"
+  );
+  const byId = new Set(valid.map((f) => f.id));
+  for (const def of DEFAULT_FAMILIES) {
+    if (!byId.has(def.id)) valid.push({ ...def });
+  }
+  return valid.length ? valid : DEFAULT_FAMILIES.slice();
+}
 
 function freshState() {
   return {
@@ -34,9 +50,7 @@ function readLocal() {
     // Defensive — make sure required keys exist
     return {
       tripCode: TRIP_CODE,
-      families: Array.isArray(parsed.families) && parsed.families.length === 5
-        ? parsed.families
-        : DEFAULT_FAMILIES.slice(),
+      families: normalizeFamilies(parsed.families),
       claims: parsed.claims && typeof parsed.claims === "object" ? parsed.claims : {},
       updatedAt: parsed.updatedAt || Date.now(),
     };
@@ -177,7 +191,7 @@ class SyncManager {
           this.applyingRemote = true;
           this.state = {
             tripCode: TRIP_CODE,
-            families: remote.families || this.state.families,
+            families: normalizeFamilies(remote.families || this.state.families),
             claims: remote.claims || {},
             updatedAt: remoteTs,
           };

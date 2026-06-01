@@ -1,5 +1,5 @@
 // Devil's Lake Camping Planner — UI logic
-// Renders all 5 screens, handles tab navigation, family selection, and checklist interactions.
+// Renders all screens, handles tab navigation, family selection, and checklist interactions.
 
 import sync from "./sync.js";
 
@@ -577,7 +577,7 @@ function wirePack() {
 
   // Reset claims
   $("#reset-claims").addEventListener("click", () => {
-    if (!confirm("Reset everyone's claims? This affects all 5 families.")) return;
+    if (!confirm("Reset everyone's claims? This affects all families.")) return;
     sync.resetClaims();
     toast("All claims cleared");
   });
