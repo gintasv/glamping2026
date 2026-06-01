@@ -218,20 +218,22 @@ function bizCardHtml(biz) {
   const cls = [];
   if (biz.highlight) cls.push("highlight");
   if (biz.info) cls.push("info");
-  const phoneBtn = biz.phone
-    ? `<a class="btn btn-secondary" href="${telLink(biz.phone)}">Call</a>` : "";
   const dirBtn = biz.address && !biz.info
     ? `<a class="btn btn-primary" href="${gmapsDir(biz.address)}" target="_blank" rel="noopener">Directions</a>` : "";
+  // Phone number stays tap-to-call from the meta row, but the big Call button is gone.
+  const phoneMeta = biz.phone
+    ? `<div><strong>Phone</strong> <a class="meta-tel" href="${telLink(biz.phone)}">${biz.phone}</a></div>`
+    : "";
   return `
     <article class="biz-card ${cls.join(" ")}">
       <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
       <p class="biz-blurb">${biz.blurb}</p>
       <div class="biz-meta">
         ${biz.address ? `<div><strong>Address</strong> ${biz.address}</div>` : ""}
-        ${biz.phone ? `<div><strong>Phone</strong> ${biz.phone}</div>` : ""}
+        ${phoneMeta}
         ${biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : ""}
       </div>
-      ${(phoneBtn || dirBtn) ? `<div class="biz-actions">${dirBtn}${phoneBtn}</div>` : ""}
+      ${dirBtn ? `<div class="biz-actions">${dirBtn}</div>` : ""}
     </article>
   `;
 }
