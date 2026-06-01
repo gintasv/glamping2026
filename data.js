@@ -50,16 +50,16 @@ const CAMPSITE = {
 
 // Trail photos sourced from Wikimedia Commons — actual Devil's Lake imagery,
 // not Midwest-shaped stock guesses.
-// Use Wikimedia's Special:FilePath endpoint (hotlink-stable, returns a sized
-// image). Direct /thumb/ URLs 400 for these files, so don't use them.
-const _WC = (file, width) =>
-  `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${width}`;
+// Real Devil's Lake imagery from Wikimedia Commons, downloaded into the repo
+// (images/trails/) rather than hotlinked. Wikimedia rate-limits (429) and
+// rejects non-bucket thumbnail sizes, which left the cards blank when several
+// loaded at once — self-hosting removes that dependency entirely.
 const TRAIL_PHOTOS = {
-  boulders:    _WC("Devils_Lake_Boulders.jpg", 800),
-  eastBluff:   _WC("East_Bluff.jpg", 800),
-  beach:       _WC("Devil%27s_Lake_Beach.jpg", 800),
-  doorway:     _WC("Devil%27sDoorway.JPG", 600),
-  natureCtr:   _WC("Devil%27s_Lake_SP_Nature_Center_P7180261.jpg", 600),
+  boulders:    "images/trails/boulders.jpg",
+  eastBluff:   "images/trails/east-bluff.jpg",
+  beach:       "images/trails/beach.jpg",
+  doorway:     "images/trails/doorway.jpg",
+  natureCtr:   "images/trails/nature-center.jpg",
 };
 
 const TRAILS = [
