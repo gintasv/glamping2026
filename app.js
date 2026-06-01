@@ -231,17 +231,21 @@ function bizCardHtml(biz) {
     ? `<a class="btn btn-primary" href="${gmapsPlace(`${biz.name}, ${biz.address}`)}" target="_blank" rel="noopener">Google Maps</a>` : "";
   const siteBtn = biz.website
     ? `<a class="btn btn-secondary" href="${biz.website}" target="_blank" rel="noopener">Website</a>` : "";
+  // Live gas prices via GasBuddy — never hardcode prices into a static page.
+  const priceBtn = biz.priceUrl
+    ? `<a class="btn btn-secondary" href="${biz.priceUrl}" target="_blank" rel="noopener">Gas prices ↗</a>` : "";
   // Phone number stays tap-to-call from the meta row, but the big Call button is gone.
   const phoneMeta = biz.phone
     ? `<div><strong>Phone</strong> <a class="meta-tel" href="${telLink(biz.phone)}">${biz.phone}</a></div>`
     : "";
-  const actions = [mapBtn, siteBtn].filter(Boolean).join("");
+  const actions = [mapBtn, siteBtn, priceBtn].filter(Boolean).join("");
   return `
     <article class="biz-card ${cls.join(" ")}">
       <h3>${biz.name}${biz.kidFriendly ? '<span class="tag-kid">Kid-friendly</span>' : ""}</h3>
       <p class="biz-blurb">${biz.blurb}</p>
       <div class="biz-meta">
         ${biz.address ? `<div><strong>Address</strong> ${biz.address}</div>` : ""}
+        ${biz.distance ? `<div><strong>From camp</strong> ${biz.distance}</div>` : ""}
         ${phoneMeta}
         ${biz.hours ? `<div><strong>Hours</strong> ${biz.hours}</div>` : ""}
       </div>
@@ -271,15 +275,6 @@ function renderSafety() {
       </div>
     </article>
   `).join("");
-
-  $("#park-contacts").innerHTML = SAFETY.parkContacts.map((c) => `
-    <div class="contact-row">
-      <span class="contact-row__name">${c.name}</span>
-      <a class="contact-row__phone" href="${telLink(c.phone)}">${c.phone}</a>
-    </div>
-  `).join("");
-
-  $("#kid-safety").innerHTML = SAFETY.kidSafety.map((k) => `<li>${k}</li>`).join("");
 
   $("#weather-card").innerHTML = `
     <h2>June at Devil's Lake</h2>

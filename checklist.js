@@ -42,7 +42,7 @@ const CHECKLIST = [
       {
         name: "Sleeping Gear",
         items: [
-          item("mattress", { perFamily: true }),
+          item("air mattress", { perFamily: true }),
           item("mattress pump", { shared: true }),
           item("bedding or sleeping bags", { perFamily: true }),
           item("pillows", { perFamily: true }),

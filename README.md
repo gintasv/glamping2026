@@ -4,10 +4,9 @@ A mobile-first info site for the 5-family group trip to **Devil's Lake State Par
 
 ## What's in it
 
-- **Park** — Site G3 amenities, cell coverage by carrier, map with directions, photos.
+- **Park** — Site G3 amenities, cell coverage by carrier, map with directions, photos, June weather norms.
 - **Do** — Kid-friendly trails (ages 3–8), kayak/SUP rentals with prices, beaches, Nature Center, and nearby attractions (Circus World, Mid-Continent Railway, Crane Foundation, Wisconsin Dells, Henry Vilas Zoo).
-- **Eat** — Grocery, gas, butcher (Straka Meats, The Meat Market), and Driftless Glen / Balanced Rock Winery / Tumbled Rock Brewery.
-- **Safety** — 911 call card, nearest 24/7 ER (SSM St. Clare, 5 mi away), alternate hospitals, park HQ, kid-safety reminders, June weather norms.
+- **Places** (Points of interest) — gas (with live GasBuddy prices), groceries, butcher, taprooms, and hospitals — each with distance from camp. Gas at the top, hospitals (SSM St. Clare + Sauk Prairie) at the bottom.
 - **Pack** — Shared checklist. Tap an item to claim it for your family — everyone sees the update. Filters: Unclaimed / Mine / Shared items / Essentials.
 
 ## Run it
