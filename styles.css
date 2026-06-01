@@ -432,15 +432,8 @@ a { color: inherit; }
   border-radius: var(--r-lg);
   overflow: hidden;
   border: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 96px 1fr;
 }
-.trail-card__img, .nearby-card__img {
-  background: var(--surface-2);
-  background-size: cover;
-  background-position: center;
-}
-.trail-card__body, .nearby-card__body { padding: 12px 14px; }
+.trail-card__body, .nearby-card__body { padding: 14px 16px; }
 .trail-card h3, .nearby-card h3 {
   margin: 0 0 6px;
   font-size: 15px;

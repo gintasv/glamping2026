@@ -86,7 +86,6 @@ function applyMapsLink(addressOrCoords) {
 // Render: Park tab
 // ──────────────────────────────────────────
 function renderPark() {
-  $("#hero").style.backgroundImage = `url('${PHOTOS.hero}')`;
   $("#park-about").textContent = PARK.about;
 
   $("#park-address").textContent = TRIP.parkAddress;
@@ -113,7 +112,6 @@ function renderPark() {
       <span class="carrier-note">${c.note}</span>
     </li>
   `).join("");
-  $("#cell-tip").textContent = CAMPSITE.cell.tip;
 
   // Bullets
   $("#park-bullets").innerHTML = PARK.bullets.map((b) => `<li>${b}</li>`).join("");
@@ -159,7 +157,6 @@ function renderDo() {
   // Trails
   $("#trail-grid").innerHTML = TRAILS.map((t) => `
     <article class="trail-card">
-      <div class="trail-card__img" style="background-image:url('${PHOTOS.byQuery[t.photoQuery] || ""}')"></div>
       <div class="trail-card__body">
         <h3>${t.name}</h3>
         <div class="trail-card__meta">
@@ -199,7 +196,6 @@ function renderDo() {
   // Nearby attractions
   $("#nearby-grid").innerHTML = NEARBY.map((n) => `
     <article class="nearby-card">
-      <div class="nearby-card__img" style="background-image:url('${PHOTOS.byQuery[n.photoQuery] || ""}')"></div>
       <div class="nearby-card__body">
         <h3>${n.title}</h3>
         <div class="trail-card__meta">
@@ -250,9 +246,6 @@ function renderEat() {
 // Render: Safety tab
 // ──────────────────────────────────────────
 function renderSafety() {
-  $("#emergency-head").textContent = SAFETY.emergency.headline;
-  $("#emergency-detail").textContent = SAFETY.emergency.detail;
-
   $("#hospital-list").innerHTML = SAFETY.hospitals.map((h) => `
     <article class="hospital-card ${h.primary ? "primary" : ""}">
       <div class="role">${h.role}</div>
@@ -282,7 +275,6 @@ function renderSafety() {
       <div class="stat"><div class="stat-value">56°F</div><div class="stat-label">Avg low</div></div>
       <div class="stat"><div class="stat-value">5.58"</div><div class="stat-label">Rain</div></div>
     </div>
-    <p class="weather-warn">${SAFETY.weather.rainNote}</p>
     <a class="btn btn-primary" href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Live NWS forecast</a>
   `;
 }

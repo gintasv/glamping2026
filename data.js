@@ -45,7 +45,6 @@ const CAMPSITE = {
       { name: "AT&T", strength: "OK", note: "Usable in open areas (beaches, bluff tops)." },
       { name: "T-Mobile", strength: "Weakest", note: "Often no signal at G3 — head to higher ground." },
     ],
-    tip: "Tell family back home you'll be hard to reach. Designate one beach time per day as 'check-in time' if you need to coordinate.",
   },
 };
 
@@ -321,11 +320,6 @@ const EAT_SHOP = {
 };
 
 const SAFETY = {
-  emergency: {
-    headline: "Call 911 in any emergency",
-    detail:
-      "Baraboo EMS is trained in rope rescue and responds at Devil's Lake regularly. Give your location as 'Group Camp Site G3, Devil's Lake State Park.'",
-  },
   hospitals: [
     {
       name: "SSM Health St. Clare Hospital",
@@ -359,7 +353,6 @@ const SAFETY = {
   ],
   parkContacts: [
     { name: "Park HQ / Ranger Station", phone: "608-356-8301" },
-    { name: "Devil's Lake Concessions (boat rentals)", phone: "608-356-3381" },
   ],
   kidSafety: [
     "Stay back from bluff edges — the drops are 500 feet and unfenced.",
@@ -371,7 +364,6 @@ const SAFETY = {
   ],
   weather: {
     summary: "June averages: high 79°F / low 56°F / 5.58 in rain (wettest month of the year here).",
-    rainNote: "Plan for at least one rain day in 5. Pack a tarp for the picnic area.",
     nwsUrl: "https://forecast.weather.gov/MapClick.php?lat=43.4096&lon=-89.7132",
   },
 };
