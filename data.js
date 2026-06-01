@@ -50,13 +50,16 @@ const CAMPSITE = {
 
 // Trail photos sourced from Wikimedia Commons — actual Devil's Lake imagery,
 // not Midwest-shaped stock guesses.
-const _WC = "https://upload.wikimedia.org/wikipedia/commons/thumb";
+// Use Wikimedia's Special:FilePath endpoint (hotlink-stable, returns a sized
+// image). Direct /thumb/ URLs 400 for these files, so don't use them.
+const _WC = (file, width) =>
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${file}?width=${width}`;
 const TRAIL_PHOTOS = {
-  boulders:    `${_WC}/2/24/Devils_Lake_Boulders.jpg/800px-Devils_Lake_Boulders.jpg`,
-  eastBluff:   `${_WC}/a/a6/East_Bluff.jpg/800px-East_Bluff.jpg`,
-  beach:       `${_WC}/3/3b/Devil%27s_Lake_Beach.jpg/800px-Devil%27s_Lake_Beach.jpg`,
-  doorway:     `${_WC}/5/51/Devil%27sDoorway.JPG/600px-Devil%27sDoorway.JPG`,
-  natureCtr:   `${_WC}/4/41/Devil%27s_Lake_SP_Nature_Center_P7180261.jpg/600px-Devil%27s_Lake_SP_Nature_Center_P7180261.jpg`,
+  boulders:    _WC("Devils_Lake_Boulders.jpg", 800),
+  eastBluff:   _WC("East_Bluff.jpg", 800),
+  beach:       _WC("Devil%27s_Lake_Beach.jpg", 800),
+  doorway:     _WC("Devil%27sDoorway.JPG", 600),
+  natureCtr:   _WC("Devil%27s_Lake_SP_Nature_Center_P7180261.jpg", 600),
 };
 
 const TRAILS = [
