@@ -29,29 +29,27 @@
   <section class="screen" data-screen="park">
     <div class="section-head">
       <h1>Devil's Lake</h1>
-      <p class="subhead" id="park-about"></p>
+      <p class="subhead">Group Camp G3 · June 18–22, 2026</p>
     </div>
 
+    <!-- Weather (top) -->
+    <h2 class="section-title">Weather</h2>
+    <div class="card forecast-card">
+      <h2>10-day forecast</h2>
+      <div class="forecast-row" id="forecast-row"></div>
+      <p class="forecast-note" id="forecast-note"></p>
+    </div>
+
+    <!-- About the park -->
+    <h2 class="section-title">About the park</h2>
     <div class="card">
-      <h2>Getting there</h2>
-      <p class="address" id="park-address"></p>
+      <p id="park-desc"></p>
+      <ul class="bullet-list" id="park-bullets"></ul>
+      <p class="address"><strong>Main office</strong><br><span id="park-office"></span></p>
       <div class="row-buttons">
-        <a class="btn btn-primary" id="open-gmaps" target="_blank" rel="noopener">Google Maps</a>
-        <a class="btn btn-secondary" id="open-amaps">Apple Maps</a>
+        <a class="btn btn-secondary" id="park-call">Call office</a>
+        <a class="btn btn-secondary" id="park-link" target="_blank" rel="noopener">Park website</a>
       </div>
-      <p class="map-legend">Maps route to your campsite (Group Camp G3), not the park office.</p>
-      <a class="btn-link" id="call-park" href="tel:6083568301">Park HQ &nbsp;·&nbsp; 608-356-8301</a>
-    </div>
-
-    <div class="card map-card">
-      <h2>Park map</h2>
-      <div id="park-map"></div>
-      <p class="map-legend">Tap a marker for directions.</p>
-    </div>
-
-    <div class="card">
-      <h2>Site G3 amenities</h2>
-      <ul class="amenities-list" id="amenities-list"></ul>
     </div>
 
     <div class="card cell-card">
@@ -60,12 +58,33 @@
       <ul class="carrier-list" id="carrier-list"></ul>
     </div>
 
+    <!-- Your campsite -->
+    <h2 class="section-title">Your campsite</h2>
     <div class="card">
-      <h2>What the park has</h2>
-      <ul class="bullet-list" id="park-bullets"></ul>
+      <h2 id="campsite-name"></h2>
+      <ul class="reservation-list">
+        <li><span class="res-label">Dates</span> <span id="res-dates"></span></li>
+        <li><span class="res-label">Check-in</span> <span id="res-checkin"></span></li>
+        <li><span class="res-label">Check-out</span> <span id="res-checkout"></span></li>
+      </ul>
+      <a class="btn btn-primary" id="reserve-link" target="_blank" rel="noopener">Campground &amp; reservations</a>
     </div>
 
-    <div class="card" id="weather-card"></div>
+    <div class="card map-card">
+      <h2>Getting there</h2>
+      <p class="address" id="park-address"></p>
+      <div class="row-buttons">
+        <a class="btn btn-primary" id="open-gmaps" target="_blank" rel="noopener">Google Maps</a>
+        <a class="btn btn-secondary" id="open-amaps">Apple Maps</a>
+      </div>
+      <div id="park-map"></div>
+      <p class="map-legend">Maps route to your campsite (Group Camp G3), not the park office.</p>
+    </div>
+
+    <div class="card">
+      <h2>Site G3 amenities</h2>
+      <ul class="amenities-list" id="amenities-list"></ul>
+    </div>
   </section>
 
   <!-- ───────── 2. Do ───────── -->

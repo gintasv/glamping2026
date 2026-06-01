@@ -91,26 +91,14 @@ function gmapsPlace(query) {
 // Render: Park tab
 // ──────────────────────────────────────────
 function renderPark() {
-  $("#park-about").textContent = PARK.about;
+  // About the park — description, amenities, main office, website
+  $("#park-desc").textContent = PARK.about;
+  $("#park-bullets").innerHTML = PARK.bullets.map((b) => `<li>${b}</li>`).join("");
+  $("#park-office").textContent = `${TRIP.parkAddress} · ${TRIP.parkPhone}`;
+  $("#park-call").href = telLink(TRIP.parkPhone);
+  $("#park-link").href = TRIP.parkWebsite;
 
-  // Show the park's official address for reference, but route the map buttons
-  // to the actual G3 coordinate — the park office is ~3 mi from the group camp.
-  $("#park-address").textContent = `Park office / main entrance · ${TRIP.parkAddress}`;
-  $("#open-gmaps").href = gmapsDir(TRIP.coords);
-  $("#open-amaps").href = applyMapsLink(TRIP.coords);
-
-  // Amenities
-  $("#amenities-list").innerHTML = CAMPSITE.amenities.map((a) => `
-    <li>
-      <div class="amenity-icon">${renderIcon(a.icon)}</div>
-      <div>
-        <div class="amenity-title">${a.title}</div>
-        <div class="amenity-detail">${a.detail}</div>
-      </div>
-    </li>
-  `).join("");
-
-  // Cell
+  // Cell coverage
   $("#cell-summary").textContent = CAMPSITE.cell.summary;
   $("#carrier-list").innerHTML = CAMPSITE.cell.carriers.map((c) => `
     <li>
@@ -120,8 +108,78 @@ function renderPark() {
     </li>
   `).join("");
 
-  // Bullets
-  $("#park-bullets").innerHTML = PARK.bullets.map((b) => `<li>${b}</li>`).join("");
+  // Your campsite — reservation + campground link
+  $("#campsite-name").textContent = CAMPSITE.name;
+  $("#res-dates").textContent = TRIP.dates;
+  $("#res-checkin").textContent = TRIP.checkIn;
+  $("#res-checkout").textContent = TRIP.checkOut;
+  $("#reserve-link").href = TRIP.reservationUrl;
+
+  // Getting there — route the map buttons to the actual G3 coordinate, since
+  // the park office address is ~3 mi from the group camp.
+  $("#park-address").textContent = `${CAMPSITE.name} · Devil's Lake State Park`;
+  $("#open-gmaps").href = gmapsDir(TRIP.coords);
+  $("#open-amaps").href = applyMapsLink(TRIP.coords);
+
+  // Site G3 amenities
+  $("#amenities-list").innerHTML = CAMPSITE.amenities.map((a) => `
+    <li>
+      <div class="amenity-icon">${renderIcon(a.icon)}</div>
+      <div>
+        <div class="amenity-title">${a.title}</div>
+        <div class="amenity-detail">${a.detail}</div>
+      </div>
+    </li>
+  `).join("");
+}
+
+// ──────────────────────────────────────────
+// Render: 10-day forecast (Open-Meteo, no API key, CORS-enabled)
+// ──────────────────────────────────────────
+function weatherIcon(code) {
+  const wrap = (inner) =>
+    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  const SUN = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="7.07"/>';
+  const CLOUD = '<path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>';
+  const RAIN = '<line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0018 7h-1.26A8 8 0 104 15.25"/>';
+  const SNOW = '<path d="M20 17.58A5 5 0 0018 8h-1.26A8 8 0 104 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/>';
+  const STORM = '<path d="M19 16.9A5 5 0 0018 7h-1.26a8 8 0 10-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/>';
+  if (code <= 1) return { svg: wrap(SUN), label: "Clear" };
+  if (code <= 3) return { svg: wrap(CLOUD), label: "Cloudy" };
+  if (code === 45 || code === 48) return { svg: wrap(CLOUD), label: "Fog" };
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { svg: wrap(SNOW), label: "Snow" };
+  if (code >= 95) return { svg: wrap(STORM), label: "Storm" };
+  return { svg: wrap(RAIN), label: "Rain" };
+}
+
+async function renderForecast() {
+  const row = $("#forecast-row");
+  const note = $("#forecast-note");
+  const { lat, lon } = TRIP.coords;
+  const url =
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+    `&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=10`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`forecast ${res.status}`);
+    const d = (await res.json()).daily;
+    row.innerHTML = d.time.map((iso, i) => {
+      const dow = new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { weekday: "short" });
+      const { svg, label } = weatherIcon(d.weather_code[i]);
+      return `
+        <div class="forecast-day">
+          <span class="forecast-day__dow">${dow}</span>
+          <span class="forecast-day__icon" role="img" aria-label="${label}">${svg}</span>
+          <span class="forecast-day__temp"><span class="forecast-day__hi">${Math.round(d.temperature_2m_max[i])}°</span> <span class="forecast-day__lo">${Math.round(d.temperature_2m_min[i])}°</span></span>
+        </div>`;
+    }).join("");
+    note.textContent = "Live forecast for the campsite · Open-Meteo";
+  } catch (err) {
+    // Offline or API unreachable — fall back to June normals + NWS link.
+    row.innerHTML = `<p class="forecast-fallback">${SAFETY.weather.summary}</p>`;
+    note.innerHTML = `Live forecast unavailable. <a href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Open NWS forecast →</a>`;
+  }
 }
 
 // ──────────────────────────────────────────
@@ -277,17 +335,6 @@ function renderSafety() {
       </div>
     </article>
   `).join("");
-
-  $("#weather-card").innerHTML = `
-    <h2>June at Devil's Lake</h2>
-    <p>${SAFETY.weather.summary}</p>
-    <div class="weather-stats">
-      <div class="stat"><div class="stat-value">79°F</div><div class="stat-label">Avg high</div></div>
-      <div class="stat"><div class="stat-value">56°F</div><div class="stat-label">Avg low</div></div>
-      <div class="stat"><div class="stat-value">5.58"</div><div class="stat-label">Rain</div></div>
-    </div>
-    <a class="btn btn-primary" href="${SAFETY.weather.nwsUrl}" target="_blank" rel="noopener">Live NWS forecast</a>
-  `;
 }
 
 // ──────────────────────────────────────────
@@ -584,6 +631,7 @@ window.addEventListener("sync:mode", (e) => updateSyncPill(e.detail));
 // ──────────────────────────────────────────
 function boot() {
   renderPark();
+  renderForecast();
   renderDo();
   renderEat();
   renderSafety();

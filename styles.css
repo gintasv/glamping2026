@@ -383,6 +383,51 @@ a { color: inherit; }
 }
 .map-legend { color: var(--ink-500); font-size: 12px; margin-top: 10px; }
 
+/* ───────── 10-day forecast ───────── */
+.forecast-row {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.forecast-day {
+  flex: 0 0 auto;
+  min-width: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 2px;
+}
+.forecast-day__dow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.forecast-day__icon { color: var(--accent); line-height: 0; }
+.forecast-day__temp { font-size: 12px; white-space: nowrap; }
+.forecast-day__hi { font-weight: 700; color: var(--ink-900); }
+.forecast-day__lo { color: var(--ink-500); }
+.forecast-note { color: var(--ink-500); font-size: 12px; margin-top: 8px; }
+.forecast-fallback { color: var(--ink-700); font-size: 14px; }
+
+/* ───────── Reservation key/value list ───────── */
+.reservation-list { list-style: none; margin: 0 0 14px; padding: 0; }
+.reservation-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--ink-700);
+}
+.reservation-list li:last-child { border-bottom: none; }
+.reservation-list .res-label { color: var(--ink-500); font-weight: 600; }
+
 .leaflet-popup-content { font-size: 13px; font-family: var(--font-sans); }
 .leaflet-popup-content a {
   display: inline-block;

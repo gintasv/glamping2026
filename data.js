@@ -7,8 +7,12 @@ const TRIP = {
   dates: "June 18–22, 2026",
   startDate: "2026-06-18",
   endDate: "2026-06-22",
+  checkIn: "3:00 PM",
+  checkOut: "1:00 PM",
   parkAddress: "S5975 Park Rd, Baraboo, WI 53913",
   parkPhone: "608-356-8301",
+  parkWebsite: "https://dnr.wisconsin.gov/topic/parks/devilslake",
+  reservationUrl: "https://wisconsin.goingtocamp.com",
   // Exact coordinates for Group Camp Site G3
   coords: { lat: 43.40955652, lon: -89.71321280 },
 };
