@@ -48,6 +48,17 @@ const CAMPSITE = {
   },
 };
 
+// Trail photos sourced from Wikimedia Commons — actual Devil's Lake imagery,
+// not Midwest-shaped stock guesses.
+const _WC = "https://upload.wikimedia.org/wikipedia/commons/thumb";
+const TRAIL_PHOTOS = {
+  boulders:    `${_WC}/2/24/Devils_Lake_Boulders.jpg/800px-Devils_Lake_Boulders.jpg`,
+  eastBluff:   `${_WC}/a/a6/East_Bluff.jpg/800px-East_Bluff.jpg`,
+  beach:       `${_WC}/3/3b/Devil%27s_Lake_Beach.jpg/800px-Devil%27s_Lake_Beach.jpg`,
+  doorway:     `${_WC}/5/51/Devil%27sDoorway.JPG/600px-Devil%27sDoorway.JPG`,
+  natureCtr:   `${_WC}/4/41/Devil%27s_Lake_SP_Nature_Center_P7180261.jpg/600px-Devil%27s_Lake_SP_Nature_Center_P7180261.jpg`,
+};
+
 const TRAILS = [
   {
     id: "tumbled-rock",
@@ -57,7 +68,7 @@ const TRAILS = [
     kidAges: "Best for ages 3–5",
     description:
       "Northern half is paved and stroller-friendly. Runs along the base of the West Bluff with big quartzite boulders to gawk at. Easiest trail in the park.",
-    photoQuery: "tumbled-rock",
+    photo: TRAIL_PHOTOS.boulders,
   },
   {
     id: "grottoes",
@@ -67,7 +78,7 @@ const TRAILS = [
     kidAges: "All ages",
     description:
       "Fine-gravel path along the base of the East Bluff. Connects the Balanced Rock, Potholes, and CCC trails so you can pick how far you want to go.",
-    photoQuery: "grottoes",
+    photo: TRAIL_PHOTOS.doorway,
   },
   {
     id: "west-shore",
@@ -77,7 +88,7 @@ const TRAILS = [
     kidAges: "Ages 4+",
     description:
       "Gentle lakeside trail. A bit rocky in spots but manageable for steady-on-their-feet kids. Great views of the East Bluff across the water.",
-    photoQuery: "lakeside",
+    photo: TRAIL_PHOTOS.eastBluff,
   },
   {
     id: "south-shore-boardwalk",
@@ -86,8 +97,8 @@ const TRAILS = [
     difficulty: "Easy",
     kidAges: "All ages, stroller OK",
     description:
-      "Fully accessible boardwalk + paved paths around the South Shore day-use area. Perfect after-dinner walk.",
-    photoQuery: "boardwalk",
+      "Fully accessible boardwalk and paved paths around the South Shore day-use area. Perfect after-dinner walk.",
+    photo: TRAIL_PHOTOS.beach,
   },
   {
     id: "group-camp",
@@ -97,7 +108,7 @@ const TRAILS = [
     kidAges: "All ages",
     description:
       "The trail that connects your G3 campsite to the South Shore. You'll walk this several times — beach trips, ice cream runs, etc.",
-    photoQuery: "forest-trail",
+    photo: TRAIL_PHOTOS.natureCtr,
   },
   {
     id: "balanced-rock-potholes",
@@ -107,7 +118,7 @@ const TRAILS = [
     kidAges: "Ages 7–8 with adult help",
     description:
       "Iconic stairway climb up the south face of the East Bluff. Hand-over-hand in sections. Not for the 3–5 crowd, but older kids love the achievement.",
-    photoQuery: "balanced-rock",
+    photo: TRAIL_PHOTOS.doorway,
   },
 ];
 

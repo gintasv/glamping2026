@@ -154,9 +154,11 @@ function pillForDifficulty(d) {
 }
 
 function renderDo() {
-  // Trails
+  // Trails — image on top, content below. Photos are real Devil's Lake imagery
+  // from Wikimedia Commons.
   $("#trail-grid").innerHTML = TRAILS.map((t) => `
     <article class="trail-card">
+      ${t.photo ? `<div class="trail-card__img" style="background-image:url('${t.photo}')" role="img" aria-label="${t.name}"></div>` : ""}
       <div class="trail-card__body">
         <h3>${t.name}</h3>
         <div class="trail-card__meta">
@@ -167,7 +169,7 @@ function renderDo() {
         <p class="trail-card__desc">${t.description}</p>
       </div>
     </article>
-  `).join("");
+  `).join("") + `<p class="trail-card__credit">Trail photos via <a href="https://commons.wikimedia.org/wiki/Category:Devil%27s_Lake_State_Park_(Wisconsin)" target="_blank" rel="noopener">Wikimedia Commons</a></p>`;
 
   // Water
   $("#water-card").innerHTML = `

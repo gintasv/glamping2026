@@ -433,7 +433,24 @@ a { color: inherit; }
   overflow: hidden;
   border: 1px solid var(--border);
 }
+.trail-card__img {
+  background: var(--surface-2);
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 16/9;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+}
 .trail-card__body, .nearby-card__body { padding: 14px 16px; }
+.trail-card__credit {
+  font-size: 10px;
+  color: var(--ink-400);
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+  text-align: right;
+}
+.trail-card__credit a { color: inherit; text-decoration: none; }
+.trail-card__credit a:hover { text-decoration: underline; }
 .trail-card h3, .nearby-card h3 {
   margin: 0 0 6px;
   font-size: 15px;
