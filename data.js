@@ -71,9 +71,17 @@ const TRAIL_PHOTOS = {
   natureCtr:   "images/trails/nature-center.jpg",
 };
 
+// Per-trail maps point to AllTrails, which shows the actual route on a map.
+// Trails without a dedicated AllTrails page fall back to the park page (an
+// interactive map of every trail). Plain Google Maps name-search was dropped —
+// it returned random nearby POIs instead of the trail.
+const _AT = "https://www.alltrails.com/trail/us/wisconsin/";
+const ALLTRAILS_PARK = "https://www.alltrails.com/parks/us/wisconsin/devils-lake-state-park";
+
 const TRAILS = [
   {
     id: "tumbled-rock",
+    mapUrl: `${_AT}tumbled-rock-trail`,
     name: "Tumbled Rock Trail",
     length: "~1 mi",
     difficulty: "Easy",
@@ -84,6 +92,7 @@ const TRAILS = [
   },
   {
     id: "grottoes",
+    mapUrl: `${_AT}devils-lake-grottos-trail`,
     name: "Grottoes Trail",
     length: "Short, level",
     difficulty: "Easy",
@@ -94,6 +103,7 @@ const TRAILS = [
   },
   {
     id: "west-shore",
+    mapUrl: ALLTRAILS_PARK,
     name: "West Shore Trail",
     length: "Lakeside",
     difficulty: "Easy",
@@ -104,6 +114,7 @@ const TRAILS = [
   },
   {
     id: "south-shore-boardwalk",
+    mapUrl: ALLTRAILS_PARK,
     name: "South Shore Boardwalk",
     length: "Short",
     difficulty: "Easy",
@@ -114,6 +125,7 @@ const TRAILS = [
   },
   {
     id: "group-camp",
+    mapUrl: ALLTRAILS_PARK,
     name: "Group Camp Trail",
     length: "~15 min walk",
     difficulty: "Easy",
@@ -124,6 +136,7 @@ const TRAILS = [
   },
   {
     id: "balanced-rock-potholes",
+    mapUrl: `${_AT}balanced-rock-trail-east-bluff-trail-and-potholes-trail-loop`,
     name: "Balanced Rock + Potholes",
     length: "~1 mi loop",
     difficulty: "Moderate (steep)",
