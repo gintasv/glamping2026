@@ -384,10 +384,9 @@ function familyOptions(state) {
 }
 
 function flagsHtml(item) {
-  // The Individual/Shared tab already conveys per-family vs group, so only the
-  // "Group share" and "Essential" badges add information on a row.
+  // The Individual/Shared tab already conveys per-family vs group, so the only
+  // badge that still adds information on a row is "Essential".
   const flags = [];
-  if (item.shared) flags.push('<span class="flag flag--shared">Group share</span>');
   if (item.essential) flags.push('<span class="flag flag--essential">Essential</span>');
   return flags.length ? `<div class="item-flags">${flags.join("")}</div>` : "";
 }

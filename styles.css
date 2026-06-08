@@ -885,7 +885,6 @@ a { color: inherit; }
   border-radius: 50%;
   background: var(--ink-300);
 }
-.dot--shared    { background: var(--warn); }
 .dot--essential { background: var(--danger); }
 
 /* ───────── Checklist groups ───────── */
@@ -1020,7 +1019,6 @@ a { color: inherit; }
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.flag--shared    { background: var(--warn-tint);   color: var(--warn); }
 .flag--essential { background: var(--danger-tint); color: var(--danger); }
 
 .item-note {
