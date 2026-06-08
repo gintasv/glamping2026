@@ -1,0 +1,15 @@
+{
+  "name": "Devil's Lake · Group Camp G3",
+  "short_name": "Devil's Lake",
+  "description": "Family camping info for Devil's Lake State Park, Group Camp G3, June 18–22, 2026.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf7",
+  "theme_color": "#3a5a44",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

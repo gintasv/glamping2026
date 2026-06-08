@@ -11,7 +11,13 @@ A mobile-first info site for the 5-family group trip to **Devil's Lake State Par
 
 ## Run it
 
-Just open `index.html` in any modern browser. It works offline (except map tiles + photos need a connection).
+Just open `index.html` in any modern browser. To make the **install + offline** features work (service worker, Add to Home Screen) it must be served over `http(s)` or `localhost` — opening the raw file works, but the service worker won't register until it's hosted (Netlify/Pages) or run from a local server.
+
+### Install on phones (works offline)
+
+It's a PWA. On a phone, open the hosted URL and use **Add to Home Screen** (Safari share menu on iOS, the install prompt / ⋮ menu on Android). It then launches full-screen like an app, with its own icon, and the info (park, trails, packing/food lists, hospitals) is cached so it **works with no signal** at the campsite. Live bits — the weather forecast, list sync, and map tiles — need a connection and degrade gracefully when offline.
+
+> Updating after install: the app shell is cached, so when you change files bump `CACHE_VERSION` in `sw.js` (and redeploy) to push the update to everyone.
 
 ### Share with the families
 
@@ -53,6 +59,9 @@ Once the file exists, every phone that loads the URL automatically joins the sha
 | `app.js` | Rendering, tab nav, checklist interactions |
 | `sync.js` | Firestore sync wrapper with local fallback |
 | `firebase-config.example.js` | Template — copy to `firebase-config.js` and fill in |
+| `manifest.webmanifest` | PWA manifest (name, icons, theme) for Add to Home Screen |
+| `sw.js` | Service worker — precaches the app shell so it works offline |
+| `icons/` | App icons (192 / 512 / 180 / favicon) |
 
 ## Notes
 

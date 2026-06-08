@@ -788,3 +788,13 @@ if (document.readyState === "loading") {
 } else {
   boot();
 }
+
+// Register the service worker (installable + offline). Relative path keeps the
+// scope correct whether the app is hosted at the domain root or a subpath.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((err) =>
+      console.warn("sync: service worker registration failed", err)
+    );
+  });
+}
