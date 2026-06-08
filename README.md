@@ -7,7 +7,9 @@ A mobile-first info site for the 5-family group trip to **Devil's Lake State Par
 - **Park** — Site G3 amenities, cell coverage by carrier, map with directions, photos, June weather norms.
 - **Do** — Kid-friendly trails (ages 3–8), kayak/SUP rentals with prices, beaches, Nature Center, and nearby attractions (Circus World, Mid-Continent Railway, Crane Foundation, Wisconsin Dells, Henry Vilas Zoo).
 - **Places** (Points of interest) — gas (with live GasBuddy prices), groceries, butcher, taprooms, and hospitals — each with distance from camp. Gas at the top, hospitals (SSM St. Clare + Sauk Prairie) at the bottom.
-- **Pack** — Shared checklist. Tap an item to claim it for your family — everyone sees the update. Filters: Unclaimed / Mine / Shared items / Essentials.
+- **Pack** — Shared checklist split into **Individual** (per-family gear) and **Shared Items** (group gear). Pick your family, then tap an item to claim it — everyone sees the update live.
+- **Food** — The food & drinks list. Tap to claim what you're bringing, and add your own items (e.g. "chicken wings") that sync to everyone.
+- **Expenses** — Venmo-style cost splitter. Log what you paid and who shared it (split equally or by custom amounts); it shows each family's net balance and a minimized "who owes whom", with **Mark paid** / **Settle all** to close out the trip. Money is split by family. *Heads-up: like the rest of the app, it's a single shared document — if two phones log an expense at the exact same moment one can get overwritten, so glance at the History to confirm yours saved.*
 
 ## Run it
 
@@ -52,7 +54,7 @@ Once the file exists, every phone that loads the URL automatically joins the sha
 
 | File | Purpose |
 |---|---|
-| `index.html` | App shell, 5 tabs, bottom nav |
+| `index.html` | App shell, 6 tabs, bottom nav, add-expense dialog |
 | `styles.css` | Mobile-first styles, outdoor palette |
 | `data.js` | All park / trail / attraction / safety data |
 | `checklist.js` | Your packing-list structure with per-item flags |

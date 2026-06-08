@@ -6,7 +6,10 @@
 //
 // State shape:
 //   { tripCode, families: [{id, name}], claims: { [itemId]: [familyId, ...] },
-//     customFood: [{ id, name, addedBy, addedAt }] }
+//     customFood: [{ id, name, addedBy, addedAt }],
+//     expenses: [{ id, description, amountCents, paidBy, shares:{famId:cents}, createdBy, createdAt }],
+//     settlements: [{ id, from, to, amountCents, createdBy, createdAt }] }
+//   All money is INTEGER CENTS.
 
 const TRIP_CODE = "devils-lake-2026-06";
 const LS_KEY = `camp:${TRIP_CODE}`;
@@ -36,6 +39,8 @@ function freshState() {
     families: DEFAULT_FAMILIES.slice(),
     claims: {},
     customFood: [],
+    expenses: [],
+    settlements: [],
     updatedAt: Date.now(),
   };
 }
@@ -51,6 +56,8 @@ function readLocal() {
       families: normalizeFamilies(parsed.families),
       claims: parsed.claims && typeof parsed.claims === "object" ? parsed.claims : {},
       customFood: Array.isArray(parsed.customFood) ? parsed.customFood : [],
+      expenses: Array.isArray(parsed.expenses) ? parsed.expenses : [],
+      settlements: Array.isArray(parsed.settlements) ? parsed.settlements : [],
       updatedAt: parsed.updatedAt || Date.now(),
     };
   } catch (e) {
@@ -139,6 +146,53 @@ class SyncManager {
     this._commit();
   }
 
+  // ─── Expenses & settlements (money in INTEGER CENTS, synced like claims) ───
+  addExpense({ description, amountCents, paidBy, shares, createdBy }) {
+    const id = `exp.${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+    this.state.expenses = [
+      ...this.state.expenses,
+      { id, description, amountCents, paidBy, shares, createdBy, createdAt: Date.now() },
+    ];
+    this._commit();
+    return id;
+  }
+
+  removeExpense(id) {
+    this.state.expenses = this.state.expenses.filter((e) => e.id !== id);
+    this._commit();
+  }
+
+  addSettlement({ from, to, amountCents, createdBy }) {
+    const id = `set.${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+    this.state.settlements = [
+      ...this.state.settlements,
+      { id, from, to, amountCents, createdBy, createdAt: Date.now() },
+    ];
+    this._commit();
+    return id;
+  }
+
+  // Append several settlements in ONE commit (used by "Settle all").
+  addSettlements(entries) {
+    const base = Date.now();
+    const made = entries.map((e, i) => ({
+      id: `set.${base}-${i}-${Math.floor(Math.random() * 1e6)}`,
+      from: e.from,
+      to: e.to,
+      amountCents: e.amountCents,
+      createdBy: e.createdBy,
+      createdAt: base,
+    }));
+    this.state.settlements = [...this.state.settlements, ...made];
+    this._commit();
+    return made.map((m) => m.id);
+  }
+
+  removeSettlement(id) {
+    this.state.settlements = this.state.settlements.filter((s) => s.id !== id);
+    this._commit();
+  }
+
   // ─── Persistence ───
   _commit() {
     this.state.updatedAt = Date.now();
@@ -162,6 +216,8 @@ class SyncManager {
       families: this.state.families,
       claims: this.state.claims,
       customFood: this.state.customFood,
+      expenses: this.state.expenses,
+      settlements: this.state.settlements,
       updatedAt: this.state.updatedAt,
     });
   }
@@ -191,6 +247,8 @@ class SyncManager {
             families: this.state.families,
             claims: this.state.claims,
             customFood: this.state.customFood,
+            expenses: this.state.expenses,
+            settlements: this.state.settlements,
             updatedAt: Date.now(),
           });
           return;
@@ -212,6 +270,8 @@ class SyncManager {
             families: normalizeFamilies(remote.families || this.state.families),
             claims: remote.claims || {},
             customFood: Array.isArray(remote.customFood) ? remote.customFood : [],
+            expenses: Array.isArray(remote.expenses) ? remote.expenses : [],
+            settlements: Array.isArray(remote.settlements) ? remote.settlements : [],
             updatedAt: remoteTs,
           };
           writeLocal(this.state);

@@ -399,6 +399,426 @@ function renderFamilySelects(state) {
   });
 }
 
+// ──────────────────────────────────────────
+// Money math — all amounts are INTEGER CENTS. Never use floats for arithmetic;
+// only divide (by 100) when formatting for display.
+// ──────────────────────────────────────────
+// Parse a user-typed amount ("$12.50", "12", "1,234.5") to integer cents, or
+// null if invalid. Builds cents from the string parts so 19.99 never becomes
+// 1998.9999 the way Math.round(parseFloat*100) can.
+function parseAmountToCents(str) {
+  let s = String(str).trim();
+  if (s === "") return null;
+  s = s.replace(/[$\s,]/g, "");
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) return null; // non-negative, ≤2 decimals
+  const [whole, frac = ""] = s.split(".");
+  const cents = Number(whole) * 100 + Number((frac + "00").slice(0, 2));
+  return Number.isSafeInteger(cents) ? cents : null;
+}
+
+function formatCents(cents) {
+  const neg = cents < 0;
+  const abs = Math.abs(cents);
+  const dollars = Math.floor(abs / 100).toLocaleString("en-US");
+  return (neg ? "-$" : "$") + dollars + "." + String(abs % 100).padStart(2, "0");
+}
+
+// Split totalCents equally across familyIds so the shares sum EXACTLY to the
+// total. The first `remainder` families (in the given fixed order) get +1 cent.
+function splitEqualCents(totalCents, familyIds) {
+  const n = familyIds.length;
+  const out = {};
+  if (n === 0) return out;
+  const base = Math.floor(totalCents / n);
+  const remainder = totalCents - base * n; // in [0, n)
+  familyIds.forEach((id, i) => { out[id] = base + (i < remainder ? 1 : 0); });
+  return out;
+}
+
+// Net balance + out-of-pocket paid per family, in cents.
+//   net > 0  → others owe this family (they're owed)
+//   net < 0  → this family owes others
+// Invariant: sum of all net === 0.
+function computeBalances(state) {
+  const net = {};
+  const paid = {};
+  const bump = (obj, id, n) => { obj[id] = (obj[id] || 0) + n; };
+  (state.expenses || []).forEach((e) => {
+    bump(net, e.paidBy, e.amountCents);
+    bump(paid, e.paidBy, e.amountCents);
+    Object.entries(e.shares || {}).forEach(([fid, c]) => bump(net, fid, -c));
+  });
+  (state.settlements || []).forEach((s) => {
+    bump(net, s.from, s.amountCents);
+    bump(net, s.to, -s.amountCents);
+  });
+  return { net, paid };
+}
+
+// Greedy debt simplification → minimal-ish list of {from, to, amountCents}.
+// Repeatedly settle the largest debtor against the largest creditor. Integer
+// cents; since Σnet === 0 both sides drain to exactly zero. Deterministic.
+function simplifyDebts(net) {
+  const debtors = [];   // owe money (net < 0) → store positive magnitude
+  const creditors = []; // are owed (net > 0)
+  Object.entries(net).forEach(([id, c]) => {
+    if (c < 0) debtors.push({ id, amt: -c });
+    else if (c > 0) creditors.push({ id, amt: c });
+  });
+  debtors.sort((a, b) => b.amt - a.amt || (a.id < b.id ? -1 : 1));
+  creditors.sort((a, b) => b.amt - a.amt || (a.id < b.id ? -1 : 1));
+  const plan = [];
+  let i = 0, j = 0;
+  while (i < debtors.length && j < creditors.length) {
+    const pay = Math.min(debtors[i].amt, creditors[j].amt);
+    if (pay > 0) plan.push({ from: debtors[i].id, to: creditors[j].id, amountCents: pay });
+    debtors[i].amt -= pay;
+    creditors[j].amt -= pay;
+    if (debtors[i].amt === 0) i++;
+    if (creditors[j].amt === 0) j++;
+  }
+  return plan;
+}
+
+// ──────────────────────────────────────────
+// Shared family gate (Pack/Food/Expenses): nudge the selector if no family is
+// chosen. Returns true if a family is selected.
+// ──────────────────────────────────────────
+function gateFamily(selectEl) {
+  if (uiState.currentFamilyId) return true;
+  const sel = selectEl || $("#family-select");
+  sel.classList.add("needs-pick", "shake");
+  sel.focus();
+  setTimeout(() => sel.classList.remove("shake"), 500);
+  toast("Pick your family first ↑");
+  return false;
+}
+
+// ──────────────────────────────────────────
+// Render: Expenses tab
+// ──────────────────────────────────────────
+function renderExpenses(state) {
+  renderFamilySelects(state);
+  renderExpenseBalances(state);
+  renderSettleUp(state);
+  renderExpenseHistory(state);
+}
+
+function renderExpenseBalances(state) {
+  const root = $("#exp-balances");
+  if ((state.expenses || []).length === 0) {
+    root.innerHTML = `<div class="food-empty">No expenses yet. Add the first one above.</div>`;
+    return;
+  }
+  const { net, paid } = computeBalances(state);
+  root.innerHTML = state.families.map((f) => {
+    const n = net[f.id] || 0;
+    const p = paid[f.id] || 0;
+    const cls = n > 0 ? "exp-net--pos" : n < 0 ? "exp-net--neg" : "exp-net--zero";
+    const label = n > 0 ? `owed ${formatCents(n)}` : n < 0 ? `owes ${formatCents(-n)}` : "settled";
+    const me = f.id === uiState.currentFamilyId ? " exp-bal--me" : "";
+    return `
+      <div class="exp-bal${me}">
+        <span class="exp-bal__name">${escapeHtml(f.name)}</span>
+        <span class="exp-bal__paid">paid ${formatCents(p)}</span>
+        <span class="exp-net ${cls}">${label}</span>
+      </div>`;
+  }).join("");
+}
+
+function renderSettleUp(state) {
+  const root = $("#exp-settle");
+  if ((state.expenses || []).length === 0) {
+    root.innerHTML = `<div class="food-empty">Nothing to settle yet.</div>`;
+    return;
+  }
+  const { net } = computeBalances(state);
+  const plan = simplifyDebts(net);
+  if (plan.length === 0) {
+    root.innerHTML = `<div class="exp-settled">🎉 All settled up — nobody owes anything.</div>`;
+    return;
+  }
+  const me = uiState.currentFamilyId;
+  const rows = plan.map((p) => {
+    const fromName = sync.getFamily(p.from)?.name || "?";
+    const toName = sync.getFamily(p.to)?.name || "?";
+    const canMark = !!me && (me === p.from || me === p.to);
+    return `
+      <div class="exp-settle-row">
+        <span class="exp-settle__txt"><strong>${escapeHtml(fromName)}</strong> → <strong>${escapeHtml(toName)}</strong></span>
+        <span class="exp-settle__amt">${formatCents(p.amountCents)}</span>
+        <button class="btn btn-secondary exp-mark" data-from="${p.from}" data-to="${p.to}" data-amount="${p.amountCents}"${canMark ? "" : " disabled"}>Mark paid</button>
+      </div>`;
+  }).join("");
+  root.innerHTML = rows +
+    `<button class="btn btn-primary exp-settle-all" id="exp-settle-all" type="button">Settle all (${plan.length})</button>`;
+}
+
+function renderExpenseHistory(state) {
+  const root = $("#exp-history");
+  const items = [
+    ...(state.expenses || []).map((e) => ({ at: e.createdAt, exp: e })),
+    ...(state.settlements || []).map((s) => ({ at: s.createdAt, set: s })),
+  ].sort((a, b) => b.at - a.at);
+  if (items.length === 0) {
+    root.innerHTML = `<div class="food-empty">No expenses logged yet.</div>`;
+    return;
+  }
+  const me = uiState.currentFamilyId;
+  root.innerHTML = items.map((it) => {
+    if (it.exp) {
+      const e = it.exp;
+      const payer = sync.getFamily(e.paidBy)?.name || "?";
+      const ids = Object.keys(e.shares || {});
+      const names = ids.map((id) => sync.getFamily(id)?.name || "?").join(", ");
+      const canDel = !!me && e.createdBy === me;
+      const del = canDel ? `<button class="food-remove" data-del-exp="${e.id}" title="Delete" aria-label="Delete expense">×</button>` : "";
+      return `
+        <div class="exp-hist">
+          <div class="exp-hist__body">
+            <div class="exp-hist__top"><span class="exp-hist__desc">${escapeHtml(e.description)}</span><span class="exp-hist__amt">${formatCents(e.amountCents)}</span></div>
+            <div class="exp-hist__meta">paid by ${escapeHtml(payer)} · split ${ids.length} way${ids.length === 1 ? "" : "s"}: ${escapeHtml(names)}</div>
+          </div>
+          ${del}
+        </div>`;
+    }
+    const s = it.set;
+    const fromName = sync.getFamily(s.from)?.name || "?";
+    const toName = sync.getFamily(s.to)?.name || "?";
+    const canDel = !!me && (me === s.from || me === s.to);
+    const del = canDel ? `<button class="food-remove" data-del-set="${s.id}" title="Undo" aria-label="Undo settlement">×</button>` : "";
+    return `
+      <div class="exp-hist exp-hist--settle">
+        <div class="exp-hist__body">
+          <div class="exp-hist__top"><span class="exp-hist__desc">${escapeHtml(fromName)} paid ${escapeHtml(toName)}</span><span class="exp-hist__amt">${formatCents(s.amountCents)}</span></div>
+          <div class="exp-hist__meta">settle-up payment</div>
+        </div>
+        ${del}
+      </div>`;
+  }).join("");
+}
+
+// ──────────────────────────────────────────
+// Add-expense dialog
+// ──────────────────────────────────────────
+let expMode = "equal"; // "equal" | "custom"
+
+function openExpenseDialog() {
+  const state = sync.getState();
+  $("#exp-desc").value = "";
+  $("#exp-amount").value = "";
+  expMode = "equal";
+  $$("#exp-mode .exp-mode__btn").forEach((b) =>
+    b.classList.toggle("exp-mode__btn--active", b.dataset.mode === "equal"));
+  // "Paid by" select carries its own options (no disabled placeholder),
+  // defaulting to the current family.
+  $("#exp-paidby").innerHTML = state.families.map((f) =>
+    `<option value="${f.id}" ${f.id === uiState.currentFamilyId ? "selected" : ""}>${escapeHtml(f.name)}</option>`
+  ).join("");
+  renderParticipantRows();
+  updateExpValidity();
+  $("#exp-dialog").showModal();
+  setTimeout(() => $("#exp-desc").focus(), 50);
+}
+
+function renderParticipantRows() {
+  const state = sync.getState();
+  $("#exp-participants").innerHTML = state.families.map((f) => {
+    if (expMode === "equal") {
+      return `
+        <label class="exp-part-row">
+          <input type="checkbox" class="exp-part-check" data-fam="${f.id}" checked>
+          <span class="exp-part-name">${escapeHtml(f.name)}</span>
+          <span class="exp-part-preview" data-fam="${f.id}"></span>
+        </label>`;
+    }
+    return `
+      <div class="exp-part-row">
+        <span class="exp-part-name">${escapeHtml(f.name)}</span>
+        <input type="text" inputmode="decimal" class="exp-part-input" data-fam="${f.id}" placeholder="$0.00" autocomplete="off">
+      </div>`;
+  }).join("");
+}
+
+function equalParticipantIds() {
+  return $$("#exp-participants .exp-part-check").filter((c) => c.checked).map((c) => c.dataset.fam);
+}
+
+// Read custom $ inputs → { famId: cents }. Returns null if any input is invalid.
+function readCustomShares() {
+  const shares = {};
+  let ok = true;
+  $$("#exp-participants .exp-part-input").forEach((inp) => {
+    const raw = inp.value.trim();
+    if (raw === "") return; // blank = $0 = not a participant
+    const c = parseAmountToCents(raw);
+    if (c === null) { ok = false; return; }
+    if (c > 0) shares[inp.dataset.fam] = c;
+  });
+  return ok ? shares : null;
+}
+
+// Build the validated {amountCents, shares} from the form, or null if invalid.
+function readExpenseForm() {
+  const amountCents = parseAmountToCents($("#exp-amount").value);
+  if (amountCents === null || amountCents <= 0) return null;
+  let shares;
+  if (expMode === "equal") {
+    const ids = equalParticipantIds();
+    if (ids.length === 0) return null;
+    shares = splitEqualCents(amountCents, ids);
+  } else {
+    shares = readCustomShares();
+    if (!shares || Object.keys(shares).length === 0) return null;
+    const sum = Object.values(shares).reduce((a, b) => a + b, 0);
+    if (sum !== amountCents) return null;
+  }
+  return { amountCents, shares };
+}
+
+function updateExpValidity() {
+  const amount = parseAmountToCents($("#exp-amount").value);
+  const validity = $("#exp-validity");
+  const saveBtn = $("#exp-save");
+  let ok = false, msg = "";
+  if (amount === null || amount <= 0) {
+    msg = $("#exp-amount").value.trim() !== "" ? "Enter a valid amount" : "";
+  } else if (expMode === "equal") {
+    const ids = equalParticipantIds();
+    if (ids.length === 0) {
+      msg = "Pick at least one family";
+    } else {
+      const shares = splitEqualCents(amount, ids);
+      $$("#exp-participants .exp-part-preview").forEach((el) => {
+        const c = shares[el.dataset.fam];
+        el.textContent = c != null ? formatCents(c) : "";
+      });
+      ok = true;
+      msg = `Split ${formatCents(amount)} among ${ids.length} famil${ids.length === 1 ? "y" : "ies"}`;
+    }
+  } else {
+    const shares = readCustomShares();
+    if (shares === null) {
+      msg = "Check the amounts — invalid number";
+    } else {
+      const sum = Object.values(shares).reduce((a, b) => a + b, 0);
+      if (Object.keys(shares).length === 0) {
+        msg = "Enter at least one share";
+      } else if (sum !== amount) {
+        const diff = sum < amount ? `${formatCents(amount - sum)} short` : `${formatCents(sum - amount)} over`;
+        msg = `${formatCents(sum)} of ${formatCents(amount)} — ${diff}`;
+      } else {
+        ok = true;
+        msg = `${formatCents(sum)} of ${formatCents(amount)} ✓`;
+      }
+    }
+  }
+  validity.textContent = msg;
+  validity.classList.toggle("exp-validity--ok", ok);
+  validity.classList.toggle("exp-validity--bad", !ok && msg !== "");
+  saveBtn.disabled = !ok;
+  return ok;
+}
+
+// ──────────────────────────────────────────
+// Wire up Expenses tab
+// ──────────────────────────────────────────
+function wireExpenses() {
+  $("#exp-family-select").addEventListener("change", (e) => {
+    uiState.currentFamilyId = e.target.value;
+    saveUI();
+    renderExpenses(sync.getState());
+  });
+
+  $("#exp-add-btn").addEventListener("click", () => {
+    if (!gateFamily($("#exp-family-select"))) return;
+    openExpenseDialog();
+  });
+
+  // Dialog close paths
+  $("#exp-cancel").addEventListener("click", () => $("#exp-dialog").close());
+  $("#exp-dialog").addEventListener("click", (e) => {
+    if (e.target.id === "exp-dialog") $("#exp-dialog").close(); // backdrop
+  });
+
+  // Split-mode toggle
+  $("#exp-mode").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-mode]");
+    if (!btn || btn.dataset.mode === expMode) return;
+    expMode = btn.dataset.mode;
+    $$("#exp-mode .exp-mode__btn").forEach((b) => b.classList.toggle("exp-mode__btn--active", b === btn));
+    renderParticipantRows();
+    updateExpValidity();
+  });
+
+  // Live validation
+  $("#exp-amount").addEventListener("input", updateExpValidity);
+  $("#exp-participants").addEventListener("input", updateExpValidity);
+  $("#exp-participants").addEventListener("change", updateExpValidity);
+
+  // Save
+  $("#exp-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!uiState.currentFamilyId) { toast("Pick your family first ↑"); return; }
+    const result = readExpenseForm();
+    if (!result) { updateExpValidity(); return; }
+    const desc = $("#exp-desc").value.trim() || "Expense";
+    sync.addExpense({
+      description: desc,
+      amountCents: result.amountCents,
+      paidBy: $("#exp-paidby").value,
+      shares: result.shares,
+      createdBy: uiState.currentFamilyId,
+    });
+    $("#exp-dialog").close();
+    toast(`Added "${desc}" — ${formatCents(result.amountCents)}`);
+  });
+
+  // Settle-up (event delegation)
+  $("#exp-settle").addEventListener("click", (e) => {
+    const mark = e.target.closest(".exp-mark");
+    if (mark) {
+      if (mark.disabled) return;
+      const from = mark.dataset.from, to = mark.dataset.to;
+      const amountCents = Number(mark.dataset.amount);
+      const me = uiState.currentFamilyId;
+      if (!me || (me !== from && me !== to)) { toast("Only the two families involved can mark this paid"); return; }
+      sync.addSettlement({ from, to, amountCents, createdBy: me });
+      toast(`Recorded ${formatCents(amountCents)} · ${sync.getFamily(from)?.name} → ${sync.getFamily(to)?.name}`);
+      return;
+    }
+    if (e.target.closest("#exp-settle-all")) {
+      if (!gateFamily($("#exp-family-select"))) return;
+      const { net } = computeBalances(sync.getState());
+      const plan = simplifyDebts(net);
+      if (plan.length === 0) return;
+      if (!confirm(`Mark all ${plan.length} payment${plan.length === 1 ? "" : "s"} as settled? This zeroes out every balance.`)) return;
+      sync.addSettlements(plan.map((p) => ({ ...p, createdBy: uiState.currentFamilyId })));
+      toast("All settled up 🎉");
+    }
+  });
+
+  // History delete (owner-scoped, event delegation)
+  $("#exp-history").addEventListener("click", (e) => {
+    const delExp = e.target.closest("[data-del-exp]");
+    if (delExp) {
+      const exp = sync.getState().expenses.find((x) => x.id === delExp.dataset.delExp);
+      if (!exp || exp.createdBy !== uiState.currentFamilyId) { toast("Only the family who logged it can delete it"); return; }
+      sync.removeExpense(exp.id);
+      toast("Expense deleted");
+      return;
+    }
+    const delSet = e.target.closest("[data-del-set]");
+    if (delSet) {
+      const s = sync.getState().settlements.find((x) => x.id === delSet.dataset.delSet);
+      const me = uiState.currentFamilyId;
+      if (!s || !me || (me !== s.from && me !== s.to)) { toast("Only the families involved can undo it"); return; }
+      sync.removeSettlement(s.id);
+      toast("Settlement undone");
+    }
+  });
+}
+
 function claimPillHtml(itemId, state) {
   const claims = state.claims[itemId] || [];
   if (claims.length === 0) return "";
@@ -765,11 +1185,13 @@ function boot() {
   wireNav();
   wirePack();
   wireFood();
+  wireExpenses();
 
-  // Subscribe to sync — re-render pack + food sections on every change
+  // Subscribe to sync — re-render pack + food + expenses on every change
   sync.subscribe((state) => {
     renderPack(state);
     renderFood(state);
+    renderExpenses(state);
   });
 
   // Render map immediately too (Park is the default tab)

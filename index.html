@@ -180,6 +180,30 @@
     </div>
   </section>
 
+  <!-- ───────── 6. Expenses ───────── -->
+  <section class="screen" data-screen="expenses" hidden>
+    <div class="pack-header">
+      <h1>Expenses</h1>
+      <p class="subhead">Log what you paid and who it was for. We split it and show who owes whom — settle up when the trip's done.</p>
+
+      <div class="family-row">
+        <label for="exp-family-select" class="family-label">I'm</label>
+        <select id="exp-family-select" class="family-select"></select>
+      </div>
+
+      <button class="btn btn-primary exp-add-btn" id="exp-add-btn" type="button">+ Add expense</button>
+    </div>
+
+    <h2 class="subgroup-title">Balances</h2>
+    <div id="exp-balances"></div>
+
+    <h2 class="subgroup-title">Settle up</h2>
+    <div id="exp-settle"></div>
+
+    <h2 class="subgroup-title">History</h2>
+    <div id="exp-history"></div>
+  </section>
+
 </main>
 
 <!-- ───────── Bottom nav ───────── -->
@@ -214,10 +238,51 @@
     </span>
     <span class="nav-label">Food</span>
   </button>
+  <button class="nav-btn" data-nav="expenses">
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>
+    </span>
+    <span class="nav-label">Expenses</span>
+  </button>
 </nav>
 
 <!-- Toast container -->
 <div id="toast" class="toast" hidden></div>
+
+<!-- Add-expense dialog -->
+<dialog id="exp-dialog" class="exp-dialog">
+  <form id="exp-form" class="exp-form" method="dialog">
+    <h2 class="exp-dialog__title">Add expense</h2>
+
+    <label class="exp-field">What was it?
+      <input id="exp-desc" type="text" maxlength="80" placeholder="e.g. Firewood, Groceries" autocomplete="off">
+    </label>
+
+    <label class="exp-field">Amount
+      <input id="exp-amount" type="text" inputmode="decimal" placeholder="$0.00" autocomplete="off">
+    </label>
+
+    <label class="exp-field">Paid by
+      <select id="exp-paidby" class="exp-paidby-select"></select>
+    </label>
+
+    <div class="exp-field">Split
+      <div class="exp-mode" id="exp-mode" role="tablist">
+        <button type="button" class="exp-mode__btn exp-mode__btn--active" data-mode="equal" role="tab">Equally</button>
+        <button type="button" class="exp-mode__btn" data-mode="custom" role="tab">Custom</button>
+      </div>
+    </div>
+
+    <div id="exp-participants" class="exp-participants"></div>
+
+    <div id="exp-validity" class="exp-validity" aria-live="polite"></div>
+
+    <div class="exp-actions">
+      <button type="button" class="btn btn-secondary" id="exp-cancel">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="exp-save">Save</button>
+    </div>
+  </form>
+</dialog>
 
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
