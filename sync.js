@@ -9,28 +9,24 @@
 
 const TRIP_CODE = "devils-lake-2026-06";
 const LS_KEY = `camp:${TRIP_CODE}`;
+// The family roster is now defined in code (there's no in-app rename), so this
+// list is the single source of truth. Names here survive a Firestore reset and
+// override whatever families happen to be stored locally or in the cloud doc.
 const DEFAULT_FAMILIES = [
-  { id: "fam-1", name: "Family 1" },
-  { id: "fam-2", name: "Family 2" },
-  { id: "fam-3", name: "Family 3" },
-  { id: "fam-4", name: "Family 4" },
-  { id: "fam-5", name: "Family 5" },
-  { id: "fam-6", name: "Family 6" },
-  { id: "fam-7", name: "Family 7" },
+  { id: "fam-1", name: "Vasiliauskas" },
+  { id: "fam-2", name: "Butkus" },
+  { id: "fam-3", name: "Kopec" },
+  { id: "fam-4", name: "Zabielskas" },
+  { id: "fam-5", name: "Janusauskas/Jones" },
+  { id: "fam-6", name: "Tolstovas" },
 ];
 
-// Keep any existing families (preserving renames) and append any default
-// families not already present by id — so adding slots #6/#7 migrates old
-// saved state additively instead of resetting names.
-function normalizeFamilies(families) {
-  const valid = (Array.isArray(families) ? families : []).filter(
-    (f) => f && typeof f.id === "string" && typeof f.name === "string"
-  );
-  const byId = new Set(valid.map((f) => f.id));
-  for (const def of DEFAULT_FAMILIES) {
-    if (!byId.has(def.id)) valid.push({ ...def });
-  }
-  return valid.length ? valid : DEFAULT_FAMILIES.slice();
+// Families are code-defined and authoritative: always return the roster above,
+// ignoring any families persisted locally or received from the cloud. This
+// keeps every device on the same names and drops stale slots (e.g. an old
+// "Family 7") without needing a migration. Claims still sync normally.
+function normalizeFamilies(_families) {
+  return DEFAULT_FAMILIES.map((f) => ({ ...f }));
 }
 
 function freshState() {
@@ -101,18 +97,6 @@ class SyncManager {
 
   getFamily(id) {
     return this.state.families.find((f) => f.id === id) || null;
-  }
-
-  setFamilyName(id, name) {
-    const fam = this.getFamily(id);
-    if (!fam) return;
-    fam.name = name.trim() || fam.name;
-    this._commit({ families: this.state.families });
-  }
-
-  setFamilies(families) {
-    this.state.families = families;
-    this._commit({ families });
   }
 
   toggleClaim(itemId, familyId) {
