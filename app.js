@@ -455,15 +455,24 @@ function computeBalances(state) {
   return { net, paid };
 }
 
+// A balance within this many cents of zero is treated as settled. Splitting an
+// amount that doesn't divide evenly leaves unavoidable rounding "dust" (a stray
+// cent or two); without this, the settle-up would show meaningless rows like
+// "owes $0.01". Two cents is below anything worth chasing on a trip.
+const SETTLE_EPSILON_CENTS = 2;
+
 // Greedy debt simplification → minimal-ish list of {from, to, amountCents}.
 // Repeatedly settle the largest debtor against the largest creditor. Integer
-// cents; since Σnet === 0 both sides drain to exactly zero. Deterministic.
+// cents. Residuals at or below SETTLE_EPSILON_CENTS are rounding dust and are
+// dropped rather than emitted as silly sub-nickel transfers.
 function simplifyDebts(net) {
+  const EPS = SETTLE_EPSILON_CENTS;
   const debtors = [];   // owe money (net < 0) → store positive magnitude
   const creditors = []; // are owed (net > 0)
   Object.entries(net).forEach(([id, c]) => {
-    if (c < 0) debtors.push({ id, amt: -c });
-    else if (c > 0) creditors.push({ id, amt: c });
+    if (c < -EPS) debtors.push({ id, amt: -c });
+    else if (c > EPS) creditors.push({ id, amt: c });
+    // |c| <= EPS is rounding dust → already "settled"
   });
   debtors.sort((a, b) => b.amt - a.amt || (a.id < b.id ? -1 : 1));
   creditors.sort((a, b) => b.amt - a.amt || (a.id < b.id ? -1 : 1));
@@ -471,11 +480,11 @@ function simplifyDebts(net) {
   let i = 0, j = 0;
   while (i < debtors.length && j < creditors.length) {
     const pay = Math.min(debtors[i].amt, creditors[j].amt);
-    if (pay > 0) plan.push({ from: debtors[i].id, to: creditors[j].id, amountCents: pay });
+    if (pay > EPS) plan.push({ from: debtors[i].id, to: creditors[j].id, amountCents: pay });
     debtors[i].amt -= pay;
     creditors[j].amt -= pay;
-    if (debtors[i].amt === 0) i++;
-    if (creditors[j].amt === 0) j++;
+    if (debtors[i].amt <= EPS) i++;
+    if (creditors[j].amt <= EPS) j++;
   }
   return plan;
 }
@@ -514,8 +523,10 @@ function renderExpenseBalances(state) {
   root.innerHTML = state.families.map((f) => {
     const n = net[f.id] || 0;
     const p = paid[f.id] || 0;
-    const cls = n > 0 ? "exp-net--pos" : n < 0 ? "exp-net--neg" : "exp-net--zero";
-    const label = n > 0 ? `owed ${formatCents(n)}` : n < 0 ? `owes ${formatCents(-n)}` : "settled";
+    // Treat a sub-2-cent balance as settled (rounding dust), matching simplifyDebts.
+    const settled = Math.abs(n) <= SETTLE_EPSILON_CENTS;
+    const cls = settled ? "exp-net--zero" : n > 0 ? "exp-net--pos" : "exp-net--neg";
+    const label = settled ? "settled" : n > 0 ? `owed ${formatCents(n)}` : `owes ${formatCents(-n)}`;
     const me = f.id === uiState.currentFamilyId ? " exp-bal--me" : "";
     return `
       <div class="exp-bal${me}">
