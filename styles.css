@@ -871,22 +871,6 @@ a { color: inherit; }
   color: var(--surface);
 }
 
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  font-size: 11px;
-  color: var(--ink-500);
-}
-.legend-item { display: inline-flex; align-items: center; gap: 6px; }
-.dot {
-  display: inline-block;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--ink-300);
-}
-.dot--essential { background: var(--danger); }
-
 /* ───────── Checklist groups ───────── */
 .group {
   background: var(--surface);
@@ -1010,17 +994,6 @@ a { color: inherit; }
   word-break: break-word;
   line-height: 1.35;
 }
-.item-flags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
-.flag {
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.flag--essential { background: var(--danger-tint); color: var(--danger); }
-
 .item-note {
   font-size: 11px;
   color: var(--ink-500);

@@ -383,14 +383,6 @@ function familyOptions(state) {
   ).join("");
 }
 
-function flagsHtml(item) {
-  // The Individual/Shared tab already conveys per-family vs group, so the only
-  // badge that still adds information on a row is "Essential".
-  const flags = [];
-  if (item.essential) flags.push('<span class="flag flag--essential">Essential</span>');
-  return flags.length ? `<div class="item-flags">${flags.join("")}</div>` : "";
-}
-
 function claimPillHtml(itemId, state) {
   const claims = state.claims[itemId] || [];
   if (claims.length === 0) return "";
@@ -421,7 +413,6 @@ function itemRowHtml(item, state) {
       <div class="check"></div>
       <div class="item-body">
         <div class="item-name">${item.name}</div>
-        ${flagsHtml(item)}
         ${item.note ? `<div class="item-note">${item.note}</div>` : ""}
       </div>
       ${claimPillHtml(item.id, state)}
