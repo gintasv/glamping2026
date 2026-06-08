@@ -9,7 +9,7 @@
 //     (sync falls back to local; the forecast shows its static fallback).
 //
 // Bump CACHE_VERSION whenever the shell assets change so old caches are purged.
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE = `devils-lake-g3-${CACHE_VERSION}`;
 
 const SHELL = [

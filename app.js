@@ -601,13 +601,6 @@ function wirePack() {
     renderPack(sync.getState());
   });
 
-  // Reset claims
-  $("#reset-claims").addEventListener("click", () => {
-    if (!confirm("Reset everyone's claims? This affects all families.")) return;
-    sync.resetClaims();
-    toast("All claims cleared");
-  });
-
   // Item toggle + group toggle (event delegation)
   $("#checklist").addEventListener("click", (e) => {
     const groupToggle = e.target.closest("[data-group-toggle]");

@@ -120,11 +120,6 @@ class SyncManager {
     return this.state.claims[itemId] || [];
   }
 
-  resetClaims() {
-    this.state.claims = {};
-    this._commit({ claims: {} });
-  }
-
   // ─── Custom food items (user-added, synced like claims) ───
   addCustomFood(name, familyId) {
     const id = `custom.${Date.now()}-${Math.floor(Math.random() * 1e6)}`;

@@ -246,12 +246,6 @@ a { color: inherit; }
   border-color: var(--border-strong);
 }
 .btn-secondary:hover { background: var(--surface-2); }
-.btn-ghost {
-  background: transparent;
-  color: var(--ink-500);
-  border-color: var(--border);
-}
-.btn-ghost:hover { background: var(--surface-2); color: var(--ink-700); }
 
 /* ───────── Lists in cards ───────── */
 .amenities-list {
@@ -1015,8 +1009,6 @@ a { color: inherit; }
 .claim-pill--other { background: var(--info); color: white; border-color: var(--info); }
 .claim-pill--shared-multi { background: var(--warn); color: white; border-color: var(--warn); }
 
-.reset-row { text-align: center; margin: 16px 0 8px; }
-.reset-row .btn { display: inline-flex; flex: 0 0 auto; min-width: 180px; }
 
 /* ───────── Food tab ───────── */
 .item-row--custom { grid-template-columns: 22px 1fr auto auto; }
