@@ -34,7 +34,7 @@ const CHECKLIST = [
           item("beach half tent", { shared: true }),
           item("tent stakes", { perFamily: true }),
           item("extra tent for kids to play or storage", { shared: true }),
-          item("tarp"),
+          item("tarp", { perFamily: true }),
           item("umbrella"),
           item("entry mat", { perFamily: true }),
         ],
@@ -54,7 +54,7 @@ const CHECKLIST = [
         items: [
           item("camping chairs", { perFamily: true }),
           item("camping tables"),
-          item("night stand"),
+          item("night stand", { perFamily: true }),
           item("table cloth"),
         ],
       },
@@ -69,12 +69,12 @@ const CHECKLIST = [
     subgroups: [
       {
         name: "Lighting",
-        items: [item("camping lights"), item("lanterns"), item("light poles", { shared: true })],
+        items: [item("camping lights", { perFamily: true }), item("lanterns"), item("light poles", { shared: true })],
       },
       {
         name: "Power Supply",
         items: [
-          item("AA and AAA batteries"),
+          item("AA and AAA batteries", { perFamily: true }),
           item("power inverter", { shared: true }),
           item("Ryobi battery", { shared: true }),
           item("chargers", { perFamily: true }),
@@ -284,7 +284,7 @@ const CHECKLIST = [
       },
       {
         name: "Toiletries",
-        items: [item("toilet paper"), item("wet wipes"), item("tissue paper")],
+        items: [item("toilet paper", { perFamily: true }), item("wet wipes", { perFamily: true }), item("tissue paper", { perFamily: true })],
       },
       {
         name: "Health & Safety",
