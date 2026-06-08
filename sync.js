@@ -78,6 +78,11 @@ class SyncManager {
     this.mode = "local";
     this.firestoreDoc = null;
     this.applyingRemote = false;
+    // True once the user has made an edit (claim/rename/reset) that isn't yet
+    // confirmed in the cloud. A freshly-loaded device has default data and a
+    // current Date.now() timestamp; without this flag it would look "newer"
+    // than the real shared doc and clobber everyone's data on connect.
+    this.hasLocalEdits = false;
   }
 
   // Subscribe to state changes. Returns unsubscribe fn.
@@ -136,6 +141,10 @@ class SyncManager {
   // ─── Persistence ───
   _commit() {
     this.state.updatedAt = Date.now();
+    // Funnel for all user mutations (renames, claims, reset) — mark the state
+    // as having unsynced local edits so the snapshot handler will push it up
+    // instead of being overwritten by remote.
+    this.hasLocalEdits = true;
     writeLocal(this.state);
     this._emit();
     if (this.mode === "cloud" && this.firestoreDoc && !this.applyingRemote) {
@@ -186,8 +195,14 @@ class SyncManager {
         const remote = snap.data();
         const remoteTs = remote.updatedAt || 0;
         const localTs = this.state.updatedAt || 0;
-        // Last-write-wins on identical timestamps; we always trust newer remote.
-        if (remoteTs >= localTs) {
+        // Push local up ONLY when we have genuine unsynced user edits that are
+        // newer than the cloud. Otherwise the remote doc is the shared source
+        // of truth — adopt it. This stops a freshly-loaded device (default
+        // names, no claims, but a current Date.now() timestamp) from looking
+        // "newer" and overwriting everyone's renames and claims on connect.
+        if (this.hasLocalEdits && localTs > remoteTs) {
+          this._pushToCloud().catch(() => {});
+        } else {
           this.applyingRemote = true;
           this.state = {
             tripCode: TRIP_CODE,
@@ -198,9 +213,8 @@ class SyncManager {
           writeLocal(this.state);
           this._emit();
           this.applyingRemote = false;
-        } else {
-          // Local is newer — push it up
-          this._pushToCloud().catch(() => {});
+          // Local now matches the cloud — our edits (if any) are confirmed.
+          this.hasLocalEdits = false;
         }
       });
 
