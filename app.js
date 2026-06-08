@@ -51,7 +51,7 @@ function renderIcon(name) {
 // ──────────────────────────────────────────
 const LS_UI_KEY = "camp:ui";
 const uiState = {
-  currentFamilyId: "fam-1",
+  currentFamilyId: "", // empty until the user picks their family — no claiming before then
   filter: "all",
   collapsedGroups: {},
   ...((() => {
@@ -376,7 +376,9 @@ function renderSafety() {
 // Render: Pack tab
 // ──────────────────────────────────────────
 function familyOptions(state) {
-  return state.families.map((f) =>
+  const none = !uiState.currentFamilyId;
+  const placeholder = `<option value="" disabled ${none ? "selected" : ""}>Select your family…</option>`;
+  return placeholder + state.families.map((f) =>
     `<option value="${f.id}" ${f.id === uiState.currentFamilyId ? "selected" : ""}>${f.name}</option>`
   ).join("");
 }
@@ -494,8 +496,9 @@ function slugify(s) {
 }
 
 function renderPack(state) {
-  $("#family-select").innerHTML = familyOptions(state);
-  $("#trip-code").textContent = state.tripCode;
+  const sel = $("#family-select");
+  sel.innerHTML = familyOptions(state);
+  sel.classList.toggle("needs-pick", !uiState.currentFamilyId);
   renderProgress(state);
   renderChecklist(state);
 }
@@ -521,49 +524,8 @@ function wirePack() {
   $("#family-select").addEventListener("change", (e) => {
     uiState.currentFamilyId = e.target.value;
     saveUI();
+    e.target.classList.toggle("needs-pick", !uiState.currentFamilyId);
     renderChecklist(sync.getState());
-  });
-
-  // Rename modal
-  const closeRenameModal = () => { $("#rename-modal").hidden = true; };
-  const saveRenameModal = () => {
-    const inputs = $$("#rename-inputs input");
-    const updated = inputs.map((inp, i) => ({
-      id: sync.getState().families[i].id,
-      name: inp.value.trim() || sync.getState().families[i].name,
-    }));
-    sync.setFamilies(updated);
-    closeRenameModal();
-    toast("✓ Names saved", 2800);
-  };
-  $("#rename-families").addEventListener("click", openRenameModal);
-  $("#rename-cancel").addEventListener("click", closeRenameModal);
-  $("#rename-save").addEventListener("click", saveRenameModal);
-
-  // Enter inside any input also saves (common keyboard expectation)
-  $("#rename-inputs").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      saveRenameModal();
-    }
-  });
-  // Backdrop click closes the modal (only when clicking the dim overlay, not the white body)
-  $("#rename-modal").addEventListener("click", (e) => {
-    if (e.target.id === "rename-modal") closeRenameModal();
-  });
-  // Escape key closes it too
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !$("#rename-modal").hidden) closeRenameModal();
-  });
-
-  // Trip-code copy
-  $("#copy-trip-code").addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(sync.getState().tripCode);
-      toast("Trip code copied");
-    } catch {
-      toast("Copy failed — code: " + sync.getState().tripCode);
-    }
   });
 
   // Filter chips
@@ -609,6 +571,15 @@ function wirePack() {
 }
 
 function handleClaim(row) {
+  // Require the user to identify their family before claiming anything.
+  if (!uiState.currentFamilyId) {
+    const sel = $("#family-select");
+    sel.classList.add("needs-pick", "shake");
+    sel.focus();
+    setTimeout(() => sel.classList.remove("shake"), 500);
+    toast("Pick your family first ↑");
+    return;
+  }
   const itemId = row.dataset.itemId;
   const before = sync.getState().claims[itemId] || [];
   const after = sync.toggleClaim(itemId, uiState.currentFamilyId);
@@ -628,14 +599,6 @@ function handleClaim(row) {
       setTimeout(() => toast(`Also claimed by ${otherNames} — chat to coordinate`, 3200), 1000);
     }
   }
-}
-
-function openRenameModal() {
-  const state = sync.getState();
-  $("#rename-inputs").innerHTML = state.families
-    .map((f, i) => `<input class="modal-input" type="text" value="${f.name}" placeholder="Family ${i + 1}" maxlength="20">`)
-    .join("");
-  $("#rename-modal").hidden = false;
 }
 
 // ──────────────────────────────────────────

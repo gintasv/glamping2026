@@ -138,13 +138,6 @@
       <div class="family-row">
         <label for="family-select" class="family-label">I'm</label>
         <select id="family-select" class="family-select"></select>
-        <button class="btn-tiny" id="rename-families">Rename</button>
-      </div>
-
-      <div class="trip-code-row">
-        <span class="trip-code-label">Trip code</span>
-        <code id="trip-code"></code>
-        <button class="btn-tiny" id="copy-trip-code">Copy</button>
       </div>
 
       <div class="filter-chips" id="filter-chips">
@@ -201,19 +194,6 @@
 
 <!-- Toast container -->
 <div id="toast" class="toast" hidden></div>
-
-<!-- Family rename modal -->
-<div class="modal" id="rename-modal" hidden>
-  <div class="modal__body">
-    <h2>Family names</h2>
-    <p class="modal__hint">Edit the family names. These show up on claims so everyone knows who's bringing what.</p>
-    <div id="rename-inputs"></div>
-    <div class="modal__buttons">
-      <button class="btn btn-secondary" id="rename-cancel">Cancel</button>
-      <button class="btn btn-primary" id="rename-save">Save</button>
-    </div>
-  </div>
-</div>
 
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

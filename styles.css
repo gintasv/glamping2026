@@ -253,20 +253,6 @@ a { color: inherit; }
 }
 .btn-ghost:hover { background: var(--surface-2); color: var(--ink-700); }
 
-.btn-tiny {
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--surface);
-  color: var(--ink-700);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-sm);
-  padding: 5px 10px;
-  cursor: pointer;
-  min-height: 30px;
-}
-.btn-tiny:hover { background: var(--surface-2); }
-
 /* ───────── Lists in cards ───────── */
 .amenities-list {
   list-style: none;
@@ -841,25 +827,18 @@ a { color: inherit; }
   letter-spacing: -0.01em;
 }
 .family-select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-
-.trip-code-row {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 11px;
-  color: var(--ink-500);
-  margin-bottom: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.trip-code-row code {
+/* While no family is chosen, draw attention to the selector. */
+.family-select.needs-pick {
+  border-color: var(--accent);
   background: var(--surface-2);
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  color: var(--ink-700);
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  letter-spacing: 0;
-  text-transform: none;
-  border: 1px solid var(--border);
+}
+.family-select.shake { animation: family-shake 0.45s ease; }
+@keyframes family-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
 }
 
 .filter-chips {
@@ -1132,64 +1111,6 @@ a { color: inherit; }
   from { opacity: 0; transform: translate(-50%, 4px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
-
-/* ───────── Modal ───────── */
-.modal {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-.modal[hidden] { display: none; }
-
-.modal__body {
-  background: var(--surface);
-  width: 100%;
-  max-width: 480px;
-  border-radius: 18px 18px 0 0;
-  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
-  max-height: 84vh;
-  overflow-y: auto;
-  border: 1px solid var(--border);
-}
-.modal__body h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.modal__hint { color: var(--ink-500); font-size: 13px; margin: 0 0 16px; line-height: 1.5; }
-.modal-input {
-  width: 100%;
-  font-family: inherit;
-  font-size: 15px;
-  padding: 10px 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-sm);
-  margin-bottom: 8px;
-  min-height: var(--tap);
-  background: var(--surface);
-  color: var(--ink-900);
-  letter-spacing: -0.005em;
-}
-.modal-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
-.modal__buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-  position: sticky;
-  bottom: 0;
-  background: var(--surface);
-  padding-top: 12px;
-  padding-bottom: 4px;
-  border-top: 1px solid var(--border);
-}
-.modal__buttons .btn { flex: 1; }
 
 /* ───────── Tablet+ ───────── */
 @media (min-width: 600px) {
