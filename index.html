@@ -130,27 +130,23 @@
   <!-- ───────── 4. Pack ───────── -->
   <section class="screen" data-screen="pack" hidden>
     <div class="pack-header">
-      <h1>Shared packing list</h1>
+      <h1>Packing list</h1>
       <p class="subhead">Tap an item to claim it for your family. Everyone sees updates live.</p>
-
-      <div class="pack-progress" id="pack-progress"></div>
 
       <div class="family-row">
         <label for="family-select" class="family-label">I'm</label>
         <select id="family-select" class="family-select"></select>
       </div>
 
-      <div class="filter-chips" id="filter-chips">
-        <button class="chip chip--active" data-filter="all">All</button>
-        <button class="chip" data-filter="unclaimed">Unclaimed</button>
-        <button class="chip" data-filter="mine">Mine</button>
-        <button class="chip" data-filter="shared">Shared items</button>
-        <button class="chip" data-filter="essential">Essentials</button>
+      <div class="pack-tabs" id="pack-tabs" role="tablist">
+        <button class="pack-tab pack-tab--active" data-packview="individual" role="tab">Individual</button>
+        <button class="pack-tab" data-packview="shared" role="tab">Shared Items</button>
       </div>
+
+      <div class="pack-progress" id="pack-progress"></div>
 
       <div class="legend">
         <span class="legend-item"><span class="dot dot--shared"></span> Group share</span>
-        <span class="legend-item"><span class="dot dot--perfamily"></span> Per family</span>
         <span class="legend-item"><span class="dot dot--essential"></span> Essential</span>
       </div>
     </div>

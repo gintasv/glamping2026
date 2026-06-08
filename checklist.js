@@ -3,7 +3,7 @@
 //
 // Item flags:
 //   shared:    true = "one for the whole group" (e.g. axe). Highlighted to discourage doubling up.
-//   perFamily: true = "each family brings their own" (e.g. sleeping bags, toothbrush). Hidden from "unclaimed" filter by default.
+//   perFamily: true = "each family brings their own" (e.g. sleeping bags, toothbrush). Drives the "Individual" tab; everything else is "Shared Items".
 //   essential: true = safety/critical (first aid, medicine, headlamps).
 //
 // Items not flagged are "normal" — claiming is optional, multiple families can claim.

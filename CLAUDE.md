@@ -35,7 +35,8 @@ Scripts load in this order (see bottom of `index.html`); load order matters beca
 - The Leaflet map is lazy-initialized (`renderMap`) once its container is visible, and `invalidateSize()` is called on tab switch — Leaflet misrenders if built while hidden.
 - Forecast (`renderForecast`) fetches Open-Meteo live; on failure it falls back to the static June-normals summary in `SAFETY.weather`.
 - Two distinct map-link helpers: `gmapsDir()` = turn-by-turn navigation; `gmapsPlace()` = drop a pin / open the place. Don't conflate them.
-- UI-only state (current family, active filter, collapsed groups) persists separately in `localStorage` under `camp:ui` — kept distinct from sync state.
+- UI-only state (current family, active pack view, collapsed groups) persists separately in `localStorage` under `camp:ui` — kept distinct from sync state.
+- The Pack tab has two views via a segmented control (`uiState.packView`): **Individual** = per-family items (`item.perFamily`), **Shared Items** = everything else. `filterItem` is the single switch. Progress is per-view: Individual counts what the *current family* packed; Shared counts items claimed by anyone.
 
 ### Sync (`sync.js`)
 - State shape: `{ tripCode, families: [{id, name}], claims: { [itemId]: [familyId, ...] }, updatedAt }`.

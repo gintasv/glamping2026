@@ -52,7 +52,7 @@ function renderIcon(name) {
 const LS_UI_KEY = "camp:ui";
 const uiState = {
   currentFamilyId: "", // empty until the user picks their family — no claiming before then
-  filter: "all",
+  packView: "individual", // "individual" (per-family items) | "shared" (everything else)
   collapsedGroups: {},
   ...((() => {
     try { return JSON.parse(localStorage.getItem(LS_UI_KEY) || "{}"); }
@@ -384,9 +384,10 @@ function familyOptions(state) {
 }
 
 function flagsHtml(item) {
+  // The Individual/Shared tab already conveys per-family vs group, so only the
+  // "Group share" and "Essential" badges add information on a row.
   const flags = [];
   if (item.shared) flags.push('<span class="flag flag--shared">Group share</span>');
-  if (item.perFamily) flags.push('<span class="flag flag--perfamily">Per family</span>');
   if (item.essential) flags.push('<span class="flag flag--essential">Essential</span>');
   return flags.length ? `<div class="item-flags">${flags.join("")}</div>` : "";
 }
@@ -429,22 +430,10 @@ function itemRowHtml(item, state) {
   `;
 }
 
-function filterItem(item, state) {
-  const claims = state.claims[item.id] || [];
-  switch (uiState.filter) {
-    case "unclaimed":
-      // Hide perFamily items from "unclaimed" — they're meant per-family, not group-claimed
-      return !item.perFamily && claims.length === 0;
-    case "mine":
-      return claims.includes(uiState.currentFamilyId);
-    case "shared":
-      return !!item.shared;
-    case "essential":
-      return !!item.essential;
-    case "all":
-    default:
-      return true;
-  }
+function filterItem(item) {
+  // Individual = items each family brings their own (perFamily).
+  // Shared Items = everything else (group gear, food, general supplies).
+  return uiState.packView === "individual" ? !!item.perFamily : !item.perFamily;
 }
 
 function renderChecklist(state) {
@@ -458,14 +447,15 @@ function renderChecklist(state) {
             const item = { ...rawItem, id, group: group.group, subgroup: sg.name };
             return item;
           })
-          .filter((item) => filterItem(item, state));
+          .filter((item) => filterItem(item));
         return { name: sg.name, items: visibleItems };
       })
       .filter((sg) => sg.items.length > 0);
 
     if (visibleSubgroups.length === 0) return "";
 
-    const totalItems = group.subgroups.reduce((sum, sg) => sum + sg.items.length, 0);
+    // Count only items visible in the current view, not the whole group.
+    const totalItems = visibleSubgroups.reduce((sum, sg) => sum + sg.items.length, 0);
     const collapsed = uiState.collapsedGroups[group.group] ? "collapsed" : "";
 
     return `
@@ -499,20 +489,33 @@ function renderPack(state) {
   const sel = $("#family-select");
   sel.innerHTML = familyOptions(state);
   sel.classList.toggle("needs-pick", !uiState.currentFamilyId);
+  $$("#pack-tabs .pack-tab").forEach((t) =>
+    t.classList.toggle("pack-tab--active", t.dataset.packview === uiState.packView));
   renderProgress(state);
   renderChecklist(state);
 }
 
 function renderProgress(state) {
-  const ids = window.CHECKLIST.flatMap((g) =>
-    g.subgroups.flatMap((sg) =>
-      sg.items.map((it) => `${slugify(g.group)}.${slugify(sg.name)}.${slugify(it.name)}`)));
+  // Progress reflects the current view. For Individual (per-family) items it
+  // counts what *my* family has packed; for Shared items, what anyone claimed.
+  const ids = [];
+  window.CHECKLIST.forEach((g) => g.subgroups.forEach((sg) => sg.items.forEach((it) => {
+    if (filterItem(it)) ids.push(`${slugify(g.group)}.${slugify(sg.name)}.${slugify(it.name)}`);
+  })));
   const total = ids.length;
-  const claimed = ids.filter((id) => (state.claims[id] || []).length > 0).length;
+  let claimed, label;
+  if (uiState.packView === "individual") {
+    const me = uiState.currentFamilyId;
+    claimed = me ? ids.filter((id) => (state.claims[id] || []).includes(me)).length : 0;
+    label = "packed";
+  } else {
+    claimed = ids.filter((id) => (state.claims[id] || []).length > 0).length;
+    label = "claimed";
+  }
   const pct = total ? Math.round((claimed / total) * 100) : 0;
   $("#pack-progress").innerHTML = `
     <div class="pack-progress__bar"><span style="width:${pct}%"></span></div>
-    <div class="pack-progress__label">${claimed} of ${total} items claimed</div>
+    <div class="pack-progress__label">${claimed} of ${total} ${label}</div>
   `;
 }
 
@@ -528,14 +531,13 @@ function wirePack() {
     renderChecklist(sync.getState());
   });
 
-  // Filter chips
-  $("#filter-chips").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-filter]");
-    if (!btn) return;
-    uiState.filter = btn.dataset.filter;
+  // Individual / Shared Items tabs
+  $("#pack-tabs").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-packview]");
+    if (!btn || btn.dataset.packview === uiState.packView) return;
+    uiState.packView = btn.dataset.packview;
     saveUI();
-    $$("#filter-chips .chip").forEach((c) => c.classList.toggle("chip--active", c === btn));
-    renderChecklist(sync.getState());
+    renderPack(sync.getState());
   });
 
   // Reset claims
@@ -589,9 +591,10 @@ function handleClaim(row) {
     toast(`Unclaimed for ${fam?.name || "you"}`);
   } else {
     toast(`Claimed by ${fam?.name || "you"}`);
-    // If others had already claimed, warn
+    // Warn about duplicate claims only for Shared items — for Individual
+    // (per-family) items, every family claiming their own is expected.
     const others = (after || []).filter((id) => id !== uiState.currentFamilyId);
-    if (others.length > 0) {
+    if (uiState.packView === "shared" && others.length > 0) {
       const otherNames = others
         .map((id) => sync.getFamily(id)?.name)
         .filter(Boolean)
