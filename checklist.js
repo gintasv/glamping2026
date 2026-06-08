@@ -144,6 +144,7 @@ const CHECKLIST = [
           item("aluminum foil"),
           item("oven mitts"),
           item("kettle", { shared: true }),
+          item("water jug pump", { shared: true }),
           item("tongs"),
           item("sugar, salt, pepper"),
           item("lighter", { essential: true }),
@@ -162,31 +163,6 @@ const CHECKLIST = [
           item("spoons", { perFamily: true }),
           item("plates", { perFamily: true }),
           item("bowls", { perFamily: true }),
-        ],
-      },
-      {
-        name: "Food & Beverages",
-        items: [
-          item("coffee & coffee bean grinder"),
-          item("tea"),
-          item("water jug"),
-          item("water jug pump", { shared: true }),
-          item("cereal"),
-          item("marshmallows"),
-          item("s'mores crackers"),
-          item("chocolate (for s'mores)"),
-          item("eggs"),
-          item("bagels"),
-          item("potato chips"),
-          item("water & mineral water"),
-          item("beer & wine"),
-          item("hard liquor"),
-          item("juice for kids and adults"),
-          item("snacks (trail mix, granola)"),
-          item("bananas"),
-          item("milk"),
-          item("blueberries"),
-          item("butter"),
         ],
       },
       {
@@ -304,6 +280,41 @@ const CHECKLIST = [
   },
 ];
 
+// ──────────────────────────────────────────
+// Food & drinks — lives on its own "Food" tab, not in the packing list.
+// IDs are derived from the SAME group/subgroup strings these items used to
+// have inside CHECKLIST, so any existing claims on them stay valid.
+// ──────────────────────────────────────────
+const FOOD_GROUP = "Cooking & Eating";
+const FOOD_SUBGROUP = "Food & Beverages";
+const FOOD = [
+  item("coffee & coffee bean grinder"),
+  item("tea"),
+  item("water jug"),
+  item("cereal"),
+  item("marshmallows"),
+  item("s'mores crackers"),
+  item("chocolate (for s'mores)"),
+  item("eggs"),
+  item("bagels"),
+  item("potato chips"),
+  item("water & mineral water"),
+  item("beer & wine"),
+  item("hard liquor"),
+  item("juice for kids and adults"),
+  item("snacks (trail mix, granola)"),
+  item("bananas"),
+  item("milk"),
+  item("blueberries"),
+  item("butter"),
+];
+const FOOD_FLAT = FOOD.map((it) => ({
+  id: `${slug(FOOD_GROUP)}.${slug(FOOD_SUBGROUP)}.${slug(it.name)}`,
+  group: FOOD_GROUP,
+  subgroup: FOOD_SUBGROUP,
+  ...it,
+}));
+
 // Build flat list with stable ids for storage/sync.
 const CHECKLIST_FLAT = [];
 CHECKLIST.forEach((g) => {
@@ -322,3 +333,5 @@ CHECKLIST.forEach((g) => {
 
 window.CHECKLIST = CHECKLIST;
 window.CHECKLIST_FLAT = CHECKLIST_FLAT;
+window.FOOD = FOOD;
+window.FOOD_FLAT = FOOD_FLAT;

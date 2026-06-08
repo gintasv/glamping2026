@@ -5,7 +5,8 @@
 // If it isn't, every operation falls back to localStorage. Same API either way.
 //
 // State shape:
-//   { tripCode, families: [{id, name}], claims: { [itemId]: [familyId, ...] } }
+//   { tripCode, families: [{id, name}], claims: { [itemId]: [familyId, ...] },
+//     customFood: [{ id, name, addedBy, addedAt }] }
 
 const TRIP_CODE = "devils-lake-2026-06";
 const LS_KEY = `camp:${TRIP_CODE}`;
@@ -34,6 +35,7 @@ function freshState() {
     tripCode: TRIP_CODE,
     families: DEFAULT_FAMILIES.slice(),
     claims: {},
+    customFood: [],
     updatedAt: Date.now(),
   };
 }
@@ -48,6 +50,7 @@ function readLocal() {
       tripCode: TRIP_CODE,
       families: normalizeFamilies(parsed.families),
       claims: parsed.claims && typeof parsed.claims === "object" ? parsed.claims : {},
+      customFood: Array.isArray(parsed.customFood) ? parsed.customFood : [],
       updatedAt: parsed.updatedAt || Date.now(),
     };
   } catch (e) {
@@ -122,6 +125,25 @@ class SyncManager {
     this._commit({ claims: {} });
   }
 
+  // ─── Custom food items (user-added, synced like claims) ───
+  addCustomFood(name, familyId) {
+    const id = `custom.${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+    this.state.customFood = [
+      ...this.state.customFood,
+      { id, name, addedBy: familyId, addedAt: Date.now() },
+    ];
+    // Auto-claim for the family that added it ("we're bringing this").
+    this.state.claims[id] = [familyId];
+    this._commit();
+    return id;
+  }
+
+  removeCustomFood(id) {
+    this.state.customFood = this.state.customFood.filter((c) => c.id !== id);
+    delete this.state.claims[id];
+    this._commit();
+  }
+
   // ─── Persistence ───
   _commit() {
     this.state.updatedAt = Date.now();
@@ -144,6 +166,7 @@ class SyncManager {
       tripCode: this.state.tripCode,
       families: this.state.families,
       claims: this.state.claims,
+      customFood: this.state.customFood,
       updatedAt: this.state.updatedAt,
     });
   }
@@ -172,6 +195,7 @@ class SyncManager {
             tripCode: this.state.tripCode,
             families: this.state.families,
             claims: this.state.claims,
+            customFood: this.state.customFood,
             updatedAt: Date.now(),
           });
           return;
@@ -192,6 +216,7 @@ class SyncManager {
             tripCode: TRIP_CODE,
             families: normalizeFamilies(remote.families || this.state.families),
             claims: remote.claims || {},
+            customFood: Array.isArray(remote.customFood) ? remote.customFood : [],
             updatedAt: remoteTs,
           };
           writeLocal(this.state);

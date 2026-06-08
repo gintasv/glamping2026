@@ -1018,6 +1018,42 @@ a { color: inherit; }
 .reset-row { text-align: center; margin: 16px 0 8px; }
 .reset-row .btn { display: inline-flex; flex: 0 0 auto; min-width: 180px; }
 
+/* ───────── Food tab ───────── */
+.item-row--custom { grid-template-columns: 22px 1fr auto auto; }
+.food-remove {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-400);
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+.food-remove:hover { background: var(--surface-2); color: var(--ink-700); }
+.food-empty {
+  padding: 14px 16px;
+  color: var(--ink-500);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.food-add-row { display: flex; gap: 8px; padding: 12px 16px 4px; }
+.food-add-input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink-900);
+  min-height: var(--tap);
+}
+.food-add-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.food-add-row .btn { flex: 0 0 auto; min-width: 72px; }
+
 /* ───────── Bottom nav ───────── */
 .bottom-nav {
   position: fixed;

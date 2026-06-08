@@ -383,6 +383,22 @@ function familyOptions(state) {
   ).join("");
 }
 
+// Escape user-entered text (custom food names) before inserting into HTML.
+// The static checklist data is trusted, but custom items are not.
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (m) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]
+  ));
+}
+
+// Fill every family <select> (Pack + Food) from the shared currentFamilyId.
+function renderFamilySelects(state) {
+  $$(".family-select").forEach((sel) => {
+    sel.innerHTML = familyOptions(state);
+    sel.classList.toggle("needs-pick", !uiState.currentFamilyId);
+  });
+}
+
 function claimPillHtml(itemId, state) {
   const claims = state.claims[itemId] || [];
   if (claims.length === 0) return "";
@@ -476,9 +492,7 @@ function slugify(s) {
 }
 
 function renderPack(state) {
-  const sel = $("#family-select");
-  sel.innerHTML = familyOptions(state);
-  sel.classList.toggle("needs-pick", !uiState.currentFamilyId);
+  renderFamilySelects(state);
   $$("#pack-tabs .pack-tab").forEach((t) =>
     t.classList.toggle("pack-tab--active", t.dataset.packview === uiState.packView));
   renderProgress(state);
@@ -506,6 +520,63 @@ function renderProgress(state) {
   $("#pack-progress").innerHTML = `
     <div class="pack-progress__bar"><span style="width:${pct}%"></span></div>
     <div class="pack-progress__label">${claimed} of ${total} ${label}</div>
+  `;
+}
+
+// ──────────────────────────────────────────
+// Render: Food tab
+// ──────────────────────────────────────────
+function customItemRowHtml(c, state) {
+  const fam = sync.getFamily(c.addedBy);
+  const claims = state.claims[c.id] || [];
+  const claimedByMe = claims.includes(uiState.currentFamilyId);
+  const claimedByOther = !claimedByMe && claims.length > 0;
+  let cls = "item-row item-row--custom";
+  if (claimedByMe) cls += " claimed-by-me";
+  else if (claimedByOther) cls += " claimed-by-other";
+  const name = escapeHtml(c.name);
+  // Only the family that added an item can remove it.
+  const canRemove = c.addedBy === uiState.currentFamilyId;
+  const removeBtn = canRemove
+    ? `<button class="food-remove" data-remove-id="${c.id}" title="Remove" aria-label="Remove ${name}">×</button>`
+    : "";
+  return `
+    <div class="${cls}" data-item-id="${c.id}" role="button" tabindex="0">
+      <div class="check"></div>
+      <div class="item-body">
+        <div class="item-name">${name}</div>
+        <div class="item-note">added by ${fam ? escapeHtml(fam.name) : "a family"}</div>
+      </div>
+      ${claimPillHtml(c.id, state)}
+      ${removeBtn}
+    </div>
+  `;
+}
+
+function renderFood(state) {
+  renderFamilySelects(state);
+  renderFoodProgress(state);
+  const custom = state.customFood || [];
+  const preHtml = `<div class="subgroup-title">Food &amp; Beverages</div>` +
+    window.FOOD_FLAT.map((it) => itemRowHtml(it, state)).join("");
+  const customHtml = `<div class="subgroup-title">Custom items</div>` +
+    (custom.length === 0
+      ? `<div class="food-empty">No custom items yet. Add what your family is bringing below.</div>`
+      : custom.map((c) => customItemRowHtml(c, state)).join(""));
+  $("#food-list").innerHTML = preHtml + customHtml;
+}
+
+function renderFoodProgress(state) {
+  const ids = [
+    ...window.FOOD_FLAT.map((it) => it.id),
+    ...(state.customFood || []).map((c) => c.id),
+  ];
+  const total = ids.length;
+  const claimed = ids.filter((id) => (state.claims[id] || []).length > 0).length;
+  const pct = total ? Math.round((claimed / total) * 100) : 0;
+  $("#food-progress").innerHTML = `
+    <div class="pack-progress__bar"><span style="width:${pct}%"></span></div>
+    <div class="pack-progress__label">${claimed} of ${total} claimed</div>
   `;
 }
 
@@ -550,7 +621,7 @@ function wirePack() {
     }
     const row = e.target.closest(".item-row");
     if (!row) return;
-    handleClaim(row);
+    handleClaim(row, { selectEl: $("#family-select"), warnDuplicates: uiState.packView === "shared" });
   });
   // Keyboard support
   $("#checklist").addEventListener("keydown", (e) => {
@@ -558,14 +629,72 @@ function wirePack() {
     const row = e.target.closest(".item-row");
     if (!row) return;
     e.preventDefault();
-    handleClaim(row);
+    handleClaim(row, { selectEl: $("#family-select"), warnDuplicates: uiState.packView === "shared" });
   });
 }
 
-function handleClaim(row) {
+// ──────────────────────────────────────────
+// Wire up Food tab interactions
+// ──────────────────────────────────────────
+function wireFood() {
+  const foodOpts = () => ({ selectEl: $("#food-family-select"), warnDuplicates: true });
+
+  $("#food-family-select").addEventListener("change", (e) => {
+    uiState.currentFamilyId = e.target.value;
+    saveUI();
+    renderFood(sync.getState());
+  });
+
+  // Item claim + remove (event delegation)
+  $("#food-list").addEventListener("click", (e) => {
+    const removeBtn = e.target.closest("[data-remove-id]");
+    if (removeBtn) {
+      e.stopPropagation(); // don't also toggle the row's claim
+      sync.removeCustomFood(removeBtn.dataset.removeId);
+      toast("Item removed");
+      return;
+    }
+    const row = e.target.closest(".item-row");
+    if (!row) return;
+    handleClaim(row, foodOpts());
+  });
+  // Keyboard support (mirror Pack)
+  $("#food-list").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const row = e.target.closest(".item-row");
+    if (!row) return;
+    e.preventDefault();
+    handleClaim(row, foodOpts());
+  });
+
+  // Add a custom food item
+  const input = $("#food-add-input");
+  const submitAdd = () => {
+    const name = input.value.trim();
+    if (!name) return;
+    if (!uiState.currentFamilyId) {
+      const sel = $("#food-family-select");
+      sel.classList.add("needs-pick", "shake");
+      sel.focus();
+      setTimeout(() => sel.classList.remove("shake"), 500);
+      toast("Pick your family first ↑");
+      return;
+    }
+    sync.addCustomFood(name, uiState.currentFamilyId);
+    input.value = "";
+    const famName = sync.getFamily(uiState.currentFamilyId)?.name || "you";
+    toast(`Added “${name}” — claimed by ${famName}`);
+  };
+  $("#food-add-btn").addEventListener("click", submitAdd);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); submitAdd(); }
+  });
+}
+
+function handleClaim(row, opts = {}) {
   // Require the user to identify their family before claiming anything.
   if (!uiState.currentFamilyId) {
-    const sel = $("#family-select");
+    const sel = opts.selectEl || $("#family-select");
     sel.classList.add("needs-pick", "shake");
     sel.focus();
     setTimeout(() => sel.classList.remove("shake"), 500);
@@ -581,10 +710,10 @@ function handleClaim(row) {
     toast(`Unclaimed for ${fam?.name || "you"}`);
   } else {
     toast(`Claimed by ${fam?.name || "you"}`);
-    // Warn about duplicate claims only for Shared items — for Individual
-    // (per-family) items, every family claiming their own is expected.
+    // Warn about duplicate claims only where coordinating matters (Shared
+    // packing items + food). For per-family items everyone claiming is expected.
     const others = (after || []).filter((id) => id !== uiState.currentFamilyId);
-    if (uiState.packView === "shared" && others.length > 0) {
+    if (opts.warnDuplicates && others.length > 0) {
       const otherNames = others
         .map((id) => sync.getFamily(id)?.name)
         .filter(Boolean)
@@ -642,10 +771,12 @@ function boot() {
   renderSafety();
   wireNav();
   wirePack();
+  wireFood();
 
-  // Subscribe to sync — re-render pack section on every change
+  // Subscribe to sync — re-render pack + food sections on every change
   sync.subscribe((state) => {
     renderPack(state);
+    renderFood(state);
   });
 
   // Render map immediately too (Park is the default tab)

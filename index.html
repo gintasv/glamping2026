@@ -153,6 +153,28 @@
     </div>
   </section>
 
+  <!-- ───────── 5. Food ───────── -->
+  <section class="screen" data-screen="food" hidden>
+    <div class="pack-header">
+      <h1>Food &amp; drinks</h1>
+      <p class="subhead">Tap an item to claim it. Add anything your family is bringing — everyone sees it live.</p>
+
+      <div class="family-row">
+        <label for="food-family-select" class="family-label">I'm</label>
+        <select id="food-family-select" class="family-select"></select>
+      </div>
+
+      <div class="pack-progress" id="food-progress"></div>
+    </div>
+
+    <div id="food-list"></div>
+
+    <div class="food-add-row">
+      <input id="food-add-input" class="food-add-input" type="text" placeholder="Add a food item (e.g. chicken wings)" maxlength="60" autocomplete="off">
+      <button class="btn btn-primary" id="food-add-btn" type="button">Add</button>
+    </div>
+  </section>
+
 </main>
 
 <!-- ───────── Bottom nav ───────── -->
@@ -180,6 +202,12 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a3 3 0 013-3h8a3 3 0 013 3v11a2 2 0 01-2 2H7a2 2 0 01-2-2V8z"/><path d="M9 5V4a3 3 0 016 0v1M5 13h14"/></svg>
     </span>
     <span class="nav-label">Pack</span>
+  </button>
+  <button class="nav-btn" data-nav="food">
+    <span class="nav-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 002 2v9M6 3v4M9 3v4"/><path d="M16 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg>
+    </span>
+    <span class="nav-label">Food</span>
   </button>
 </nav>
 
